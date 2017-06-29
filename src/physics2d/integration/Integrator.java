@@ -37,4 +37,8 @@ public abstract class Integrator {
 	 * (0, singleStepSize]
 	 **/
 	protected abstract void singleStep(double amount);
+	
+	protected Collection<RigidBody> getCollection(){
+		return bodies;
+	}
 }

@@ -33,8 +33,6 @@ public class CircleShape extends NarrowShape{
 	
 	public ContactPoint generateContactPoint(NarrowShape shape){
 		if(shape.getID() == 1){
-			RigidBody A = this.getRigidBody();
-			RigidBody B = shape.getRigidBody();
 			Vec2 normal = getNormal(shape);
 			double penetration = getPenetration(shape);
 			Vec2 pos = getPos(shape);
