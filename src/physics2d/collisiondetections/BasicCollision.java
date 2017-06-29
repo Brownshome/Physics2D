@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import physics2d.RigidBody;
+import physics2d.contactsolver.ContactPoint;
 import physics2d.maths.Vec2;
 
 public class BasicCollision implements CollisionDetector{
@@ -48,7 +49,13 @@ public class BasicCollision implements CollisionDetector{
 	}
 	
 	private Collection<ContactPoint> properCollision(RigidBody A, RigidBody B){
-		
+		NarrowShape narrowShapeA = A.getNarrowShape();
+		NarrowShape narrowShapeB = B.getNarrowShape();
+		Collection<ContactPoint> output = new ArrayList<ContactPoint>();
+		if(narrowShapeA.isColliding(narrowShapeB) | narrowShapeB.isColliding(narrowShapeA)){
+			output.add(narrowShapeA.generateContactPoint(narrowShapeB));
+		}
+		return output;
 	}
 	
 }

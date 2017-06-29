@@ -2,6 +2,7 @@ package physics2d;
 
 import physics2d.maths.*;
 import physics2d.collisiondetections.BroadShape;
+import physics2d.collisiondetections.NarrowShape;
 
 /** 
  * Represents a physical object. 
@@ -45,4 +46,5 @@ public interface RigidBody {
 	}	
 
 	BroadShape getBroadShape();
+	NarrowShape getNarrowShape();
 }

@@ -65,4 +65,14 @@ public class Vec2 {
 	public double dot(Vec2 vec) {
 		return x() * vec.x() + y() * vec.y();
 	}
+	
+	public void normalize() {
+		double length = length();
+		x = x / length;
+		y = y / length;
+	}
+	
+	public double length() {
+		return Math.sqrt(distanceSquared(this));
+	}
 }
