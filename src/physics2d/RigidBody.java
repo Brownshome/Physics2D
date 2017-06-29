@@ -1,6 +1,7 @@
 package physics2d;
 
 import physics2d.maths.*;
+import physics2d.collisiondetections.BroadShape;
 
 /** 
  * Represents a physical object. 
@@ -41,5 +42,7 @@ public interface RigidBody {
 	default void transformToBodyCoordinates(Vec2 point) {
 		point.subtract(position());
 		direction().rotate(point);
-	}
+	}	
+
+	BroadShape getBroadShape();
 }
