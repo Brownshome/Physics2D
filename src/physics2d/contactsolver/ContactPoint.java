@@ -15,10 +15,12 @@ public final class ContactPoint {
 	final Vec2 normal;
 	/** The penetration of one object into another */
 	final double penetration;
-	/** The current impulse that has been assigned to this point */
+	/** The current impulse that has been assigned to this point. Positive impulses are attractive */
 	private double impulse;
 	/** The objects that are colliding */
 	final RigidBody objectA, objectB;
+	final double restitution;
+	/** The desired closing velocity */
 	private final double desiredRelativeVelocity;
 	
 	public ContactPoint(double penetration, Vec2 position, Vec2 normal, RigidBody a, RigidBody b) {
@@ -29,7 +31,18 @@ public final class ContactPoint {
 		this.objectB = b;
 		this.penetration = penetration;
 		
-		this.desiredRelativeVelocity = calculateDesiredVelocity();
+		desiredRelativeVelocity = calculateDesiredVelocity();
+		restitution = Math.min(objectA.restitution(), objectB.restitution());
+	}
+
+	private double relativeVelocity() {
+		Vec2 velocityA = new Vec2(position);
+		Vec2 velocityB = new Vec2(position);
+		
+		objectA.convertToVelocity(velocityA);
+		objectB.convertToVelocity(velocityB);
+		
+		return velocityA.dot(normal) - velocityB.dot(normal);
 	}
 
 	private double calculateDesiredVelocity() {
@@ -37,7 +50,17 @@ public final class ContactPoint {
 	}
 	
 	void applyImpulse() {
-		assert false : "TODO";
+		//apply impulse
+		double deltaImpulse = -(1 + restitution) * relativeVelocity() / (objectA.inverseMass() + objectB.inverseMass());
+		
+		//apply impulse to objects
+		Vec2 impulseA = new Vec2(normal);
+		impulseA.scale(deltaImpulse);
+		objectA.applyImpulse(impulseA, 0);
+		
+		Vec2 impulseB = new Vec2(normal);
+		impulseB.scale(-deltaImpulse);
+		objectB.applyImpulse(impulseB, 0);
 	}
 	
 	/** Returns a double in the range [0, 1] that
@@ -46,15 +69,7 @@ public final class ContactPoint {
 	 * A value of 0 means that the constraint is not met and a value of 1 means
 	 * the constraint is met perfectly */
 	double accuracy() {
-		Vec2 velocityA = new Vec2(position);
-		Vec2 velocityB = new Vec2(position);
-		
-		objectA.convertToVelocity(velocityA);
-		objectB.convertToVelocity(velocityB);
-		
-		double relativeVelocity = velocityA.dot(normal) - velocityB.dot(normal);
-		
-		double rawAccuracy = Math.abs(relativeVelocity - desiredRelativeVelocity);
+		double rawAccuracy = Math.abs(relativeVelocity() - desiredRelativeVelocity);
 		
 		return Math.min(Math.max(rawAccuracy / desiredRelativeVelocity, 1.0), 0.0);
 	}

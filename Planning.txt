@@ -21,16 +21,15 @@ Engine:
 Jobs
 ~~~~
 
-Debug viewer
-Collision detection & contact generation
-Contact solving
-Penetration resolution
-Math library
-Intregrator
+Debug viewer - J
+Collision detection & contact generation - R
+Contact solving - R
+Penetration resolution - J, not urgent
+Math library - J
+Intregrator - R
+rigidBody - J
 
-addRigidBody
-removeRigidBody
-getContactPoints
+Collection<ContactPoint> getContactPoints
 
 void solveContactPoints(Collection<ContactPoint>);
 
@@ -52,6 +51,6 @@ RigidBody
 		
 PhysicsWorld
 	- contains
-		* RigidBody
 		1 CollisionDetection
 		1 ContactSolver
+		1 Integrator

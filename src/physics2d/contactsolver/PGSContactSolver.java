@@ -32,6 +32,16 @@ public class PGSContactSolver implements ContactSolver {
 
 	/** Returns true if the collision constraint has been met */
 	private boolean solveSingleIteration(Collection<ContactPoint> contactPoints) {
+		double accuracy = 0;
 		
+		for(ContactPoint point : contactPoints) {
+			point.applyImpulse();
+		}
+		
+		for(ContactPoint point : contactPoints) {
+			accuracy += point.accuracy();
+		}
+		
+		return accuracy < accuracyTarget;
 	}
 }
