@@ -75,4 +75,13 @@ public class Vec2 {
 	public double length() {
 		return Math.sqrt(distanceSquared(this));
 	}
+
+	public void add(double x, double y) {
+		set(x() + x, y() + y);
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("(%.3f, %.3f)", x(), y());
+	}
 }

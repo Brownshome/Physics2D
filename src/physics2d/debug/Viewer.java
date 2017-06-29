@@ -4,20 +4,23 @@ import java.awt.*;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.Timer;
 
+import javafx.geometry.Dimension2D;
 import physics2d.*;
 import physics2d.collisiondetections.*;
 import physics2d.contactsolver.*;
 import physics2d.integration.*;
+import physics2d.maths.Vec2;
 
-public class Viewer extends Canvas {
+public class Viewer extends JPanel {
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(Viewer::startApplication);
 	}
 	
 	private static void startApplication() {
 		JFrame frame = new JFrame();
-		frame.add(new Viewer());
+		frame.getContentPane().add(new Viewer());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 	    frame.setLocationRelativeTo(null);
@@ -29,11 +32,17 @@ public class Viewer extends Canvas {
 	private final Collection<RigidBody> bodies;
 	
 	public Viewer() {
-		super();
+		super(true);
 		
-		setSize(1000, 1000);
+		new Timer(16, e -> {
+			repaint();
+		}).start();
 		
-		bodies = Arrays.asList();
+		bodies = Arrays.asList(
+				new CircleBody(new Vec2(400, 400), new Vec2(0, 0), 100),
+				new CircleBody(new Vec2(410, 400), new Vec2(0, 0), 100)
+		);
+		
 		Integrator integrator = new EulerIntegrator(bodies, 0.005, 7);
 		CollisionDetector detector = new BasicCollision();
 		
@@ -43,20 +52,25 @@ public class Viewer extends Canvas {
 		
 		ContactSolver solver = new PGSContactSolver(4, 0.9);
 		
-		world = new PhysicsWorld(detector, solver, integrator);
-		
-		repaint();
+		world = new PhysicsWorld(detector, solver, integrator);		
 	}
 	
 	@Override
-	public void paint(Graphics g) {
+	public Dimension getPreferredSize() {
+		return new Dimension(1000, 1000);
+	}
+	
+	@Override
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		
 		g.clearRect(0, 0, getWidth(), getHeight());
+		
+		world.tickWorld(0.016);
 		
 		for(RigidBody b : bodies) {
 			paintShape(b, (Graphics2D) g);
 		}
-		
-		repaint();
 	}
 
 	private void paintShape(RigidBody b, Graphics2D g) {
