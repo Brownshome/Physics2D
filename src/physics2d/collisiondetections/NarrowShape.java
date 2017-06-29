@@ -15,6 +15,7 @@ public abstract class NarrowShape {
 	public NarrowShape(Vec2 position, int id, RigidBody rigidBody){
 		_position = position;
 		_ID = id;
+		_RigidBody = rigidBody;
 	}
 	
 	public abstract boolean isColliding(NarrowShape shape);

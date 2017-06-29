@@ -39,8 +39,8 @@ public class Viewer extends JPanel {
 		}).start();
 		
 		bodies = Arrays.asList(
-				new CircleBody(new Vec2(400, 400), new Vec2(0, 0), 100),
-				new CircleBody(new Vec2(410, 400), new Vec2(0, 0), 100)
+				new CircleBody(new Vec2(800, 400), new Vec2(-40, 0), 100),
+				new CircleBody(new Vec2(400, 400), new Vec2(40, 0), 100)
 		);
 		
 		Integrator integrator = new EulerIntegrator(bodies, 0.005, 7);
