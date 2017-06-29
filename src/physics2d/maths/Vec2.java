@@ -56,7 +56,7 @@ public class Vec2 {
 		y(y() * scale);
 	}
 
-	public double distanceSquared(Vec2 vec) {
+	public double distanceSq(Vec2 vec) {
 		double dx = x() - vec.x();
 		double dy = y() - vec.y();
 		return dx * dx + dy * dy;
@@ -73,7 +73,11 @@ public class Vec2 {
 	}
 	
 	public double length() {
-		return Math.sqrt(distanceSquared(this));
+		return Math.sqrt(lengthSq());
+	}
+	
+	public double lengthSq() {
+		return x() * x() + y() * y();
 	}
 
 	public void add(double x, double y) {
@@ -83,5 +87,9 @@ public class Vec2 {
 	@Override
 	public String toString() {
 		return String.format("(%.3f, %.3f)", x(), y());
+	}
+
+	public double distance(Vec2 position) {
+		return Math.sqrt(distanceSq(position));
 	}
 }

@@ -17,11 +17,8 @@ public class CircleShape extends NarrowShape{
 		if(shape.getID() == 1){
 			CircleShape circleShape = (CircleShape) shape;
 			Vec2 shapePosition = shape.getPosition();
-			if(Math.sqrt(Math.pow(Math.abs(shapePosition.x() - this.getPosition().x()), 2) 
-				+ Math.pow(Math.abs(shapePosition.y() - this.getPosition().y()), 2)) < _radius + circleShape.getRadius()){
-				return true;
-			}
-			return false;
+			
+			return circleShape.getPosition().distanceSq(getPosition()) < (_radius + circleShape._radius) * (_radius + circleShape._radius);
 		}
 		
 		return false;
@@ -55,9 +52,7 @@ public class CircleShape extends NarrowShape{
 	private double getPenetration(NarrowShape shape){
 		if(shape.getID() == 1){
 			CircleShape circleShape = (CircleShape) shape;
-			Vec2 distance = new Vec2(this.getPosition());
-			distance.subtract(shape.getPosition());
-			return _radius + circleShape.getRadius() - Math.sqrt(distance.distanceSquared(distance));
+			return _radius + circleShape.getRadius() - getPosition().distance(shape.getPosition());
 		}
 		
 		return 0;

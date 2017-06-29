@@ -38,7 +38,8 @@ public interface RigidBody {
 		direction().tangent(spinVelocity);
 		spinVelocity.scale(angularVelocity());
 		
-		point.add(velocity());
+		point.set(velocity());
+		point.add(spinVelocity);
 	}
 	
 	/** 

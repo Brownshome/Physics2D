@@ -37,7 +37,7 @@ public class CircleBody implements RigidBody {
 		this.angularVelocity = 0;
 		this.direction = new Rotation();
 		
-		narrowShape = new CircleShape(position, size / 2, this);
+		narrowShape = new CircleShape(this.position, size / 2, this);
 	}
 	
 	@Override
@@ -72,7 +72,7 @@ public class CircleBody implements RigidBody {
 
 	@Override
 	public void applyImpulse(Vec2 impulse, double angularImpulse) {
-		velocity.scale(inverseMass());
+		impulse.scale(inverseMass());
 		velocity.add(impulse);
 		
 		//TODO
@@ -95,6 +95,6 @@ public class CircleBody implements RigidBody {
 
 	@Override
 	public double restitution() {
-		return 0.75;
+		return 0.9;
 	}
 }
