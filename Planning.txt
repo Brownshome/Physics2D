@@ -26,6 +26,7 @@ Collision detection & contact generation
 Contact solving
 Penetration resolution
 Math library
+Intregrator
 
 addRigidBody
 removeRigidBody
