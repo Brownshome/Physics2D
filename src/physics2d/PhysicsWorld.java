@@ -18,8 +18,9 @@ public class PhysicsWorld {
 	}
 	
 	public boolean tickWorld(double timeStep) {
-		integrator.step(timeStep);
+		boolean success = integrator.step(timeStep);
 		Collection<ContactPoint> contacts = collisionDetector.getContactPoints();
 		contactSolver.solveContactPoints(contacts);
+		return success;
 	}
 }
