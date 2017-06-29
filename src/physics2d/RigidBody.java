@@ -19,6 +19,11 @@ public interface RigidBody {
 	double mass();
 	/** Gets the rotational inertia of the object in kg m^2 */
 	double inertia();
+	/** Applies an impulse to the shape */
+	void applyImpulse(Vec2 impulse, double angularImpulse);
+	/** Returns true if this object can move */
+	boolean canMove();
+	
 	
 	/**
 	 * Converts a point to the velocity at that point in world space
@@ -45,4 +50,9 @@ public interface RigidBody {
 	}	
 
 	BroadShape getBroadShape();
+	double restitution();
+	
+	default double inverseMass() {
+		return canMove() ? 1.0 / mass() : 0.0;
+	}
 }
