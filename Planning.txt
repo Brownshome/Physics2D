@@ -1,0 +1,56 @@
+Use Case
+~~~~~~~~
+
+Debug:
+	render the world
+
+User:
+	Create a physics world
+	Add global forceConstraint
+	Add RigidBody
+	Tick the world
+	Add a collision callback
+	Get the status of an object
+	Add a collision filter
+	
+Engine:
+	generate contact points
+	solve contact points
+	apply forces
+
+Jobs
+~~~~
+
+Debug viewer
+Collision detection & contact generation
+Contact solving
+Penetration resolution
+Math library
+
+addRigidBody
+removeRigidBody
+getContactPoints
+
+void solveContactPoints(Collection<ContactPoint>);
+
+UML
+~~~
+
+RigidBody
+	- contains
+		Broadphase shape
+		Narrowphase shape
+		Position
+		Direction
+		Velocity
+		Mass
+		Inertia
+		
+	- refrences
+		
+		
+PhysicsWorld
+	- contains
+		* RigidBody
+		1 CollisionDetection
+		1 ContactSolver
