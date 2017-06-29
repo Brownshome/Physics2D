@@ -11,9 +11,9 @@ public class PGSContactSolver implements ContactSolver {
 	private final int maximumIterationCount;
 	private final double accuracyTarget;
 	
-	public PGSContactSolver() {
-		maximumIterationCount = 4;
-		accuracyTarget = 0.9;
+	public PGSContactSolver(int maximumIterationCount, double accuracyTarget) {
+		this.maximumIterationCount = maximumIterationCount;
+		this.accuracyTarget = accuracyTarget;
 	}
 	
 	@Override

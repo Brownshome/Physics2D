@@ -1,14 +1,13 @@
 package physics2d.collisiondetections;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 import physics2d.RigidBody;
 import physics2d.contactsolver.ContactPoint;
 import physics2d.maths.Vec2;
 
 public class BasicCollision implements CollisionDetector{
-	private Collection<RigidBody> _rigidBodies = new ArrayList<RigidBody>(); 
+	private List<RigidBody> _rigidBodies = new ArrayList<>(); 
 	@Override
 	public void addRigidBody(RigidBody rigidBody) {
 		_rigidBodies.add(rigidBody);
@@ -21,8 +20,15 @@ public class BasicCollision implements CollisionDetector{
 
 	@Override
 	public Collection<ContactPoint> getContactPoints() {
-		// TODO Auto-generated method stub
-		return null;
+		List<ContactPoint> list = new ArrayList<>();
+		
+		for(int a = 0; a < _rigidBodies.size(); a++) {
+			for(int b = a + 1; b < _rigidBodies.size(); b++) {
+				list.addAll(generalCollision(_rigidBodies.get(a), _rigidBodies.get(b)));
+			}
+		}
+		
+		return list;
 	}
 	
 	//determines if the broad shapes of any two rigid bodies collide, returning the contact points of the collision. If
@@ -45,13 +51,14 @@ public class BasicCollision implements CollisionDetector{
 				return properCollision(A, B);
 			}
 		}
-		return new ArrayList<ContactPoint>();
+		
+		return Collections.emptyList();
 	}
 	
 	private Collection<ContactPoint> properCollision(RigidBody A, RigidBody B){
 		NarrowShape narrowShapeA = A.getNarrowShape();
 		NarrowShape narrowShapeB = B.getNarrowShape();
-		Collection<ContactPoint> output = new ArrayList<ContactPoint>();
+		Collection<ContactPoint> output = new ArrayList<>();
 		if(narrowShapeA.isColliding(narrowShapeB) | narrowShapeB.isColliding(narrowShapeA)){
 			output.add(narrowShapeA.generateContactPoint(narrowShapeB));
 		}
