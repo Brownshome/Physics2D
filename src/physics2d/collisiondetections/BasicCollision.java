@@ -38,16 +38,16 @@ public class BasicCollision implements CollisionDetector{
 		ArrayList<Vec2> boundariesB = B.getBroadShape().getCorners();
 		//checks to see which value has the lowest x position, then tests if the other box's leftmost x is within the range
 		//of the first. Then it does the same for the y values.
-		if(boundariesA.get(0).x() < boundariesB.get(0).x() & boundariesB.get(0).x() < boundariesA.get(3).x()){
-			if(boundariesA.get(0).y() < boundariesB.get(0).y() & boundariesB.get(0).y() < boundariesA.get(1).y()){
+		if((boundariesA.get(0).x() <= boundariesB.get(0).x()) && (boundariesB.get(0).x() <= boundariesA.get(3).x())){
+			if((boundariesA.get(0).y() <= boundariesB.get(0).y()) && (boundariesB.get(0).y() <= boundariesA.get(1).y())){
 				return properCollision(A, B);
-			} if(boundariesB.get(0).y() < boundariesA.get(0).y() & boundariesA.get(0).y() < boundariesB.get(1).y()){
+			} if((boundariesB.get(0).y() <= boundariesA.get(0).y()) && (boundariesA.get(0).y() <= boundariesB.get(1).y())){
 				return properCollision(A, B);
 			}
-		} if(boundariesB.get(0).x() < boundariesA.get(0).x() & boundariesA.get(0).x() < boundariesB.get(3).x()){
-			if(boundariesA.get(0).y() < boundariesB.get(0).y() & boundariesB.get(0).y() < boundariesA.get(1).y()){
+		} if((boundariesB.get(0).x() <= boundariesA.get(0).x()) && (boundariesA.get(0).x() <= boundariesB.get(3).x())){
+			if((boundariesA.get(0).y() <= boundariesB.get(0).y()) && (boundariesB.get(0).y() <= boundariesA.get(1).y())){
 				return properCollision(A, B);
-			} if(boundariesB.get(0).y() < boundariesA.get(0).y() & boundariesA.get(0).y() < boundariesB.get(1).y()){
+			} if((boundariesB.get(0).y() <= boundariesA.get(0).y()) && (boundariesA.get(0).y() <= boundariesB.get(1).y())){
 				return properCollision(A, B);
 			}
 		}
@@ -59,7 +59,7 @@ public class BasicCollision implements CollisionDetector{
 		NarrowShape narrowShapeA = A.getNarrowShape();
 		NarrowShape narrowShapeB = B.getNarrowShape();
 		Collection<ContactPoint> output = new ArrayList<>();
-		if(narrowShapeA.isColliding(narrowShapeB) | narrowShapeB.isColliding(narrowShapeA)){
+		if(narrowShapeA.isColliding(narrowShapeB) || narrowShapeB.isColliding(narrowShapeA)){
 			output.add(narrowShapeA.generateContactPoint(narrowShapeB));
 		}
 		return output;

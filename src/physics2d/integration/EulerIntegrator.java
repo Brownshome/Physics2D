@@ -19,7 +19,5 @@ public class EulerIntegrator extends Integrator{
 			velocity.scale(amount);
 			body.position().add(velocity);
 		}
-		
 	}
-
 }
