@@ -42,18 +42,15 @@ public class Vec2 {
 	}
 	
 	public void add(Vec2 vec) {
-		x(x() + vec.x());
-		y(y() + vec.y());
+		add(vec.x(), vec.y());
 	}
 
 	public void subtract(Vec2 vec) {
-		x(x() - vec.x());
-		y(y() - vec.y());
+		add(-vec.x(), -vec.y());
 	}
 
 	public void scale(double scale) {
-		x(x() * scale);
-		y(y() * scale);
+		set(x() * scale, y() * scale);
 	}
 
 	public double distanceSq(Vec2 vec) {
@@ -67,9 +64,8 @@ public class Vec2 {
 	}
 	
 	public void normalize() {
-		double length = length();
-		x = x / length;
-		y = y / length;
+		double scale = 1 / length();
+		scale(scale);
 	}
 	
 	public double length() {
@@ -91,5 +87,9 @@ public class Vec2 {
 
 	public double distance(Vec2 position) {
 		return Math.sqrt(distanceSq(position));
+	}
+
+	public void scaleAdd(Vec2 vec, double scale) {
+		set(x() + vec.x() * scale, y() + vec.y() * scale);
 	}
 }

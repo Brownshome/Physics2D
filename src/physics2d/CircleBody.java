@@ -95,6 +95,6 @@ public class CircleBody implements RigidBody {
 
 	@Override
 	public double restitution() {
-		return 0.9;
+		return 0.2;
 	}
 }

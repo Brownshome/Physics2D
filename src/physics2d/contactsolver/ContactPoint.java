@@ -22,6 +22,7 @@ public final class ContactPoint {
 	final double restitution;
 	/** The desired closing velocity */
 	private final double desiredRelativeVelocity;
+	private final double startingVelocityA, startingVelocityB;
 	
 	public ContactPoint(double penetration, Vec2 position, Vec2 normal, RigidBody a, RigidBody b) {
 		this.position = position;
@@ -33,27 +34,36 @@ public final class ContactPoint {
 		
 		desiredRelativeVelocity = calculateDesiredVelocity();
 		restitution = Math.min(objectA.restitution(), objectB.restitution());
+		
+		startingVelocityA = velocity(objectA);
+		startingVelocityB = velocity(objectB);
+	}
+
+	private double velocity(RigidBody body) {
+		Vec2 velocityA = new Vec2(position);
+		body.convertToVelocity(velocityA);
+		return velocityA.dot(normal);
 	}
 
 	private double relativeVelocity() {
-		Vec2 velocityA = new Vec2(position);
-		Vec2 velocityB = new Vec2(position);
-		
-		objectA.convertToVelocity(velocityA);
-		objectB.convertToVelocity(velocityB);
-		
-		return velocityA.dot(normal) - velocityB.dot(normal);
+		return velocity(objectA) - velocity(objectB);
 	}
 
 	private double calculateDesiredVelocity() {
 		return 0;
 	}
 	
-	void applyImpulse() {
+	void solveImpulse() {
 		//apply impulse
 		double deltaImpulse = -(1 + restitution) * relativeVelocity() / (objectA.inverseMass() + objectB.inverseMass());
 		
 		//apply impulse to objects
+		applyImpulse(deltaImpulse);
+		
+		impulse += deltaImpulse;
+	}
+
+	private void applyImpulse(double deltaImpulse) {
 		Vec2 impulseA = new Vec2(normal);
 		impulseA.scale(deltaImpulse);
 		objectA.applyImpulse(impulseA, 0);
@@ -61,8 +71,6 @@ public final class ContactPoint {
 		Vec2 impulseB = new Vec2(normal);
 		impulseB.scale(-deltaImpulse);
 		objectB.applyImpulse(impulseB, 0);
-		
-		impulse += deltaImpulse;
 	}
 	
 	/** Returns a double in the range [0, 1] that
@@ -73,18 +81,47 @@ public final class ContactPoint {
 	double accuracy() {
 		double rawAccuracy = Math.abs(relativeVelocity() - desiredRelativeVelocity);
 		
-		return Math.min(Math.max(rawAccuracy / desiredRelativeVelocity, 1.0), 0.0);
+		return 1.0 - Math.min(Math.max(rawAccuracy / Math.max(Math.abs(desiredRelativeVelocity), 1e-6), 1.0), 0.0);
 	}
 
-	public void clampImpulse() {
+	void clampImpulse() {
 		if(impulse < 0) {
-			Vec2 impulseA = new Vec2(normal);
-			impulseA.scale(-impulse);
-			objectA.applyImpulse(impulseA, 0);
-			
-			Vec2 impulseB = new Vec2(normal);
-			impulseB.scale(impulse);
-			objectB.applyImpulse(impulseB, 0);
+			applyImpulse(-impulse);
 		}
+	}
+
+	void removePenetration() {
+		/*
+		 * Scale the penetration relaxation by the relative velocities
+		 * Overall we move back by penetration units
+		 */
+		
+		//Static object can't be moved :(
+		if(!objectA.canMove() && !objectB.canMove()) {
+			return;
+		}
+		
+		if(!objectA.canMove()) {
+			objectB.position().scaleAdd(normal, -penetration);
+			return;
+		}
+		
+		if(!objectB.canMove()) {
+			objectA.position().scaleAdd(normal, penetration);
+			return;
+		}
+		
+		double sum = (Math.abs(startingVelocityA) + Math.abs(startingVelocityB)) * 1.2;
+		double moveA, moveB;
+		if(sum < 1e-6) { //Objects are not moving much at all
+			moveA = penetration * 0.5;
+			moveB = -penetration * 0.5;
+		} else {
+			moveA = penetration * Math.abs(startingVelocityA) / sum;
+			moveB = -penetration * Math.abs(startingVelocityB) / sum;
+		}
+		
+		objectA.position().scaleAdd(normal, moveA);
+		objectB.position().scaleAdd(normal, moveB);
 	}
 }

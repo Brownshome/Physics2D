@@ -29,8 +29,10 @@ public class PGSContactSolver implements ContactSolver {
 				break;
 		}
 		
+		//finalise points
 		for(ContactPoint point : contactPoints) {
 			point.clampImpulse();
+			point.removePenetration();
 		}
 	}
 
@@ -39,13 +41,13 @@ public class PGSContactSolver implements ContactSolver {
 		double accuracy = 0;
 		
 		for(ContactPoint point : contactPoints) {
-			point.applyImpulse();
+			point.solveImpulse();
 		}
 		
 		for(ContactPoint point : contactPoints) {
 			accuracy += point.accuracy();
 		}
 		
-		return accuracy < accuracyTarget;
+		return accuracy / contactPoints.size() >= accuracyTarget;
 	}
 }
