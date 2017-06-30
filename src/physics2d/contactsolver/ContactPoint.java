@@ -12,20 +12,21 @@ public final class ContactPoint {
 	private static double penetrationRelaxation = 0.75;
 	
 	/** The position of the contact in world space */
-	final Vec2 position;
+	private final Vec2 position;
 	/** The normal of the contact going from bodyA to bodyB */
-	final Vec2 normal;
+	private final Vec2 normal;
 	/** The penetration of one object into another */
-	final double penetration;
+	private final double penetration;
 	/** The current impulse that has been assigned to this point. Positive impulses are attractive */
 	private double impulse;
 	/** The objects that are colliding */
-	final RigidBody objectA, objectB;
-	final double restitution;
+	private final RigidBody objectA, objectB;
+	private final double restitution;
 	/** The desired closing velocity */
 	private final double desiredRelativeVelocity;
 	private final double startingVelocityA, startingVelocityB;
 	
+	/** All inputs are safe and do not need to be copied */
 	public ContactPoint(double penetration, Vec2 position, Vec2 normal, RigidBody a, RigidBody b) {
 		this.position = position;
 		this.normal = normal;
@@ -34,8 +35,8 @@ public final class ContactPoint {
 		this.objectB = b;
 		this.penetration = penetration * penetrationRelaxation;
 		
-		desiredRelativeVelocity = calculateDesiredVelocity();
 		restitution = Math.min(objectA.restitution(), objectB.restitution());
+		desiredRelativeVelocity = calculateDesiredVelocity();
 		
 		startingVelocityA = velocity(objectA);
 		startingVelocityB = velocity(objectB);
@@ -52,12 +53,27 @@ public final class ContactPoint {
 	}
 
 	private double calculateDesiredVelocity() {
-		return 0;
+		return -restitution * relativeVelocity();
 	}
 	
 	void solveImpulse() {
+		double velocityDelta = desiredRelativeVelocity - relativeVelocity();
+		
+		Vec2 tmp = new Vec2(position);
+		tmp.subtract(objectA.position());
+		tmp.tangent();
+		double torqueA = tmp.dot(normal);
+		
+		tmp.set(position);
+		tmp.subtract(objectB.position());
+		tmp.tangent();
+		double torqueB = tmp.dot(normal);
+		
 		//apply impulse
-		double deltaImpulse = -(1 + restitution) * relativeVelocity() / (objectA.inverseMass() + objectB.inverseMass());
+		double easeOfImpulse = objectA.inverseMass() + objectB.inverseMass()
+				+ torqueA * torqueA * objectA.inverseInertia() + torqueB * torqueB * objectB.inverseInertia();
+		
+		double deltaImpulse = velocityDelta / easeOfImpulse;
 		
 		//apply impulse to objects
 		applyImpulse(deltaImpulse);
@@ -96,6 +112,8 @@ public final class ContactPoint {
 		/*
 		 * Scale the penetration relaxation by the relative velocities
 		 * Overall we move back by penetration units
+		 * 
+		 * TODO handle rotational penetration relaxation
 		 */
 		
 		//Static object can't be moved :(
