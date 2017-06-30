@@ -58,11 +58,7 @@ public class BasicCollision implements CollisionDetector{
 	private Collection<ContactPoint> properCollision(RigidBody A, RigidBody B){
 		NarrowShape narrowShapeA = A.getNarrowShape();
 		NarrowShape narrowShapeB = B.getNarrowShape();
-		Collection<ContactPoint> output = new ArrayList<>();
-		if(narrowShapeA.isColliding(narrowShapeB) || narrowShapeB.isColliding(narrowShapeA)){
-			output.add(narrowShapeA.generateContactPoint(narrowShapeB));
-		}
-		return output;
+		return NarrowShapeCollisionDetection.getInstance().isColliding(narrowShapeA, narrowShapeB);
 	}
 	
 }

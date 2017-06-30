@@ -18,10 +18,6 @@ public abstract class NarrowShape {
 		_RigidBody = rigidBody;
 	}
 	
-	public abstract boolean isColliding(NarrowShape shape);
-	
-	public abstract ContactPoint generateContactPoint(NarrowShape shape);
-	
 	public int getID(){
 		return _ID;
 	}
