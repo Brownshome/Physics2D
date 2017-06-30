@@ -11,16 +11,26 @@ public class PhysicsWorld {
 	private final ContactSolver contactSolver;
 	private final Integrator integrator;
 	
+	private int internalIterations;
+	
 	public PhysicsWorld(CollisionDetector detector, ContactSolver solver, Integrator integrator) {
+		this(detector, solver, integrator, 50);
+	}
+	
+	public PhysicsWorld(CollisionDetector detector, ContactSolver solver, Integrator integrator, int internalIterations) {
 		collisionDetector = detector;
 		contactSolver = solver;
 		this.integrator = integrator;
+		this.internalIterations = internalIterations;
 	}
 	
 	public boolean tickWorld(double timeStep) {
 		boolean success = integrator.step(timeStep);
-		Collection<ContactPoint> contacts = collisionDetector.getContactPoints();
-		contactSolver.solveContactPoints(contacts);
+		
+		for(int i = 0; i < internalIterations; i++) {
+			contactSolver.solveContactPoints(collisionDetector.getContactPoints());
+		}
+		
 		return success;
 	}
 }
