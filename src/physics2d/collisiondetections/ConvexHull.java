@@ -1,13 +1,15 @@
 package physics2d.collisiondetections;
 
-public class ConvexHull extends NarrowShape{
+import physics2d.RigidBody;
+import physics2d.maths.Vec2;
 
+public class ConvexHull extends NarrowShape{
 	
 	
-	@Override
-	public boolean isColliding(NarrowShape shape) {
-		// TODO Auto-generated method stub
-		return false;
+	public ConvexHull(Vec2 position, RigidBody rigidBody) {
+		super(position, 2, rigidBody);
+		// TODO Auto-generated constructor stub
 	}
 
+	
 }

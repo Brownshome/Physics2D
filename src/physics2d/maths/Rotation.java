@@ -26,7 +26,4 @@ public class Rotation extends Vec2 {
 		return v;
 	}
 	
-	public void tangent(Vec2 v) {
-		v.set(-y(), x());
-	}
 }
