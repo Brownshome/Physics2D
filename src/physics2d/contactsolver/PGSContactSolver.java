@@ -28,6 +28,10 @@ public class PGSContactSolver implements ContactSolver {
 			if(solveSingleIteration(contactPoints))
 				break;
 		}
+		
+		for(ContactPoint point : contactPoints) {
+			point.clampImpulse();
+		}
 	}
 
 	/** Returns true if the collision constraint has been met */

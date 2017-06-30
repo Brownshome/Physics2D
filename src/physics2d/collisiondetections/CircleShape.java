@@ -28,6 +28,7 @@ public class CircleShape extends NarrowShape{
 		return _radius;
 	}
 	
+	@Override
 	public ContactPoint generateContactPoint(NarrowShape shape){
 		if(shape.getID() == 1){
 			Vec2 normal = getNormal(shape);
