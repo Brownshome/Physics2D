@@ -61,6 +61,8 @@ public final class ContactPoint {
 		Vec2 impulseB = new Vec2(normal);
 		impulseB.scale(-deltaImpulse);
 		objectB.applyImpulse(impulseB, 0);
+		
+		impulse += deltaImpulse;
 	}
 	
 	/** Returns a double in the range [0, 1] that
@@ -72,5 +74,17 @@ public final class ContactPoint {
 		double rawAccuracy = Math.abs(relativeVelocity() - desiredRelativeVelocity);
 		
 		return Math.min(Math.max(rawAccuracy / desiredRelativeVelocity, 1.0), 0.0);
+	}
+
+	public void clampImpulse() {
+		if(impulse < 0) {
+			Vec2 impulseA = new Vec2(normal);
+			impulseA.scale(-impulse);
+			objectA.applyImpulse(impulseA, 0);
+			
+			Vec2 impulseB = new Vec2(normal);
+			impulseB.scale(impulse);
+			objectB.applyImpulse(impulseB, 0);
+		}
 	}
 }
