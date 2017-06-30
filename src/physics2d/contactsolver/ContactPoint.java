@@ -9,6 +9,8 @@ import physics2d.maths.Vec2;
  * Represents a single point of contact between two objects. 
  **/
 public final class ContactPoint {
+	private static double penetrationRelaxation = 0.75;
+	
 	/** The position of the contact in world space */
 	final Vec2 position;
 	/** The normal of the contact going from bodyA to bodyB */
@@ -30,7 +32,7 @@ public final class ContactPoint {
 		this.impulse = 0;
 		this.objectA = a;
 		this.objectB = b;
-		this.penetration = penetration;
+		this.penetration = penetration * penetrationRelaxation;
 		
 		desiredRelativeVelocity = calculateDesiredVelocity();
 		restitution = Math.min(objectA.restitution(), objectB.restitution());
@@ -85,7 +87,7 @@ public final class ContactPoint {
 	}
 
 	void clampImpulse() {
-		if(impulse < 0) {
+		if(impulse > 0) {
 			applyImpulse(-impulse);
 		}
 	}
@@ -102,23 +104,23 @@ public final class ContactPoint {
 		}
 		
 		if(!objectA.canMove()) {
-			objectB.position().scaleAdd(normal, -penetration);
+			objectB.position().scaleAdd(normal, penetration);
 			return;
 		}
 		
 		if(!objectB.canMove()) {
-			objectA.position().scaleAdd(normal, penetration);
+			objectA.position().scaleAdd(normal, -penetration);
 			return;
 		}
 		
-		double sum = (Math.abs(startingVelocityA) + Math.abs(startingVelocityB)) * 1.2;
+		double sum = (Math.abs(startingVelocityA) + Math.abs(startingVelocityB));
 		double moveA, moveB;
 		if(sum < 1e-6) { //Objects are not moving much at all
-			moveA = penetration * 0.5;
-			moveB = -penetration * 0.5;
+			moveA = -penetration * 0.5;
+			moveB = penetration * 0.5;
 		} else {
-			moveA = penetration * Math.abs(startingVelocityA) / sum;
-			moveB = -penetration * Math.abs(startingVelocityB) / sum;
+			moveA = -penetration * Math.abs(startingVelocityA) / sum;
+			moveB = penetration * Math.abs(startingVelocityB) / sum;
 		}
 		
 		objectA.position().scaleAdd(normal, moveA);

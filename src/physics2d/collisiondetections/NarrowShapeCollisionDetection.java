@@ -1,9 +1,6 @@
 package physics2d.collisiondetections;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import physics2d.contactsolver.ContactPoint;
 import physics2d.maths.Vec2;
@@ -16,7 +13,8 @@ public class NarrowShapeCollisionDetection {
 		_HashMap = new HashMap<>();
 		_HashMap.put(new CollisionType(1,1), this::circleCircleCollision);
 		_HashMap.put(new CollisionType(4, 1), this::lineCircleCollision);
-		_HashMap.put(new CollisionType(1, 4), this::circleLineCollision);
+		_HashMap.put(new CollisionType(1, 4), (a, b) -> lineCircleCollision(b, a));
+		_HashMap.put(new CollisionType(4, 4), (a, b) -> Collections.emptyList());
 	}
 	
 	public static NarrowShapeCollisionDetection getInstance(){
@@ -39,8 +37,8 @@ public class NarrowShapeCollisionDetection {
 		Collection<ContactPoint> output = new ArrayList<ContactPoint>();
 		
 		if(APosition.distanceSq(BPosition) < (circleShapeB.getRadius() + circleShapeA.getRadius()) * (circleShapeB.getRadius() + circleShapeA.getRadius())){
-			Vec2 normal = new Vec2(circleShapeA.getPosition());
-			normal.subtract(circleShapeB.getPosition());
+			Vec2 normal = new Vec2(circleShapeB.getPosition());
+			normal.subtract(circleShapeA.getPosition());
 			normal.normalize();
 			double penetration = circleShapeA.getRadius() + circleShapeB.getRadius() - circleShapeA.getPosition().distance(circleShapeB.getPosition());
 			Vec2 position = new Vec2(circleShapeA.getPosition());
@@ -53,28 +51,21 @@ public class NarrowShapeCollisionDetection {
 	}
 	
 	private Collection<ContactPoint> lineCircleCollision(NarrowShape A, NarrowShape B){
-		PlaneShape psA = (PlaneShape) A;
-		CircleShape csB = (CircleShape) B;
-		Collection<ContactPoint> output = new ArrayList<ContactPoint>();
-		Vec2 constant = new Vec2(psA.getPosition());
-		constant.subtract(csB.getPosition());
-		double distance = psA.getDirection().dot(constant);
-		if(distance < csB.getRadius()){
-			Vec2 normal = new Vec2(psA.getDirection());
-			normal.tangent(normal);
-			double penetration = csB.getRadius() - distance;
-			double normalMultiple = csB.getRadius() - penetration;
-			Vec2 circleToPlane = new Vec2(normal);
-			circleToPlane.scale(normalMultiple);
-			Vec2 position = csB.getPosition();
-			position.add(circleToPlane);
-			output.add(new ContactPoint(penetration, position, normal, A.getRigidBody(), B.getRigidBody()));
+		PlaneShape plane = (PlaneShape) A;
+		CircleShape circle = (CircleShape) B;
+		
+		double distance =  plane.getNormal().dot(circle.getPosition()) - plane.getNormal().dot(plane.getPosition());
+		
+		if(distance < circle.getRadius()) {
+			double penetration = circle.getRadius() - distance;
+			
+			Vec2 circleToPlane = new Vec2(plane.getNormal());
+			circleToPlane.scale(-distance - penetration / 2);
+			circleToPlane.add(circle.getPosition());
+			
+			return Arrays.asList(new ContactPoint(penetration, circleToPlane, plane.getNormal(), A.getRigidBody(), B.getRigidBody()));
 		}
 		
-		return output;
-	}
-	
-	private Collection<ContactPoint> circleLineCollision(NarrowShape A, NarrowShape B){
-		return lineCircleCollision(B, A);
+		return Collections.emptyList();
 	}
 }

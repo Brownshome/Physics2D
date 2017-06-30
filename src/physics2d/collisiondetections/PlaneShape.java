@@ -4,15 +4,18 @@ import physics2d.RigidBody;
 import physics2d.maths.Vec2;
 
 public class PlaneShape extends NarrowShape{
-	private Vec2 _direction;
+	private Vec2 _normal;
 
-	public PlaneShape(Vec2 position, RigidBody rigidBody, Vec2 direction) {
+	/**
+	 * @param normal points out from the side objects will bounce off 
+	 **/
+	public PlaneShape(Vec2 position, RigidBody rigidBody, Vec2 normal) {
 		super(position, 4, rigidBody);
-		_direction = direction;
+		_normal = normal;
 	}
 	
-	public Vec2 getDirection(){
-		return _direction;
+	public Vec2 getNormal(){
+		return _normal;
 	}
 	
 }

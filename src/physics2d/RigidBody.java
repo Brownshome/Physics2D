@@ -61,4 +61,7 @@ public interface RigidBody {
 		return canMove() ? 1.0 / mass() : 0.0;
 	}
 
+	default double inverseInertia() {
+		return canMove() ? 1.0 / inertia() : 0.0;
+	}
 }

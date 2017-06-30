@@ -5,14 +5,19 @@ import physics2d.contactsolver.ContactPoint;
 import physics2d.maths.*;
 
 public class CircleBody implements RigidBody {
+	private final double radius;
+	
 	private final Vec2 position, velocity;
 	private final Rotation direction;
-	private final double mass, inertia, angularVelocity;
+	private final double mass, inertia;
+	private double angularVelocity;
 	
 	private final BroadShape broadShape;
 	private final NarrowShape narrowShape;
 	
 	public CircleBody(Vec2 position, Vec2 velocity, double size) {
+		radius = size / 2;
+		
 		Vec2 tmp = new Vec2(position);
 		tmp.add(-size / 2, -size / 2);
 		broadShape = new BroadShape(tmp, size, size);
@@ -75,7 +80,8 @@ public class CircleBody implements RigidBody {
 		impulse.scale(inverseMass());
 		velocity.add(impulse);
 		
-		//TODO
+		angularImpulse *= inverseInertia();
+		angularVelocity += angularImpulse;
 	}
 
 	@Override
@@ -95,6 +101,10 @@ public class CircleBody implements RigidBody {
 
 	@Override
 	public double restitution() {
-		return 0.2;
+		return 0.95;
+	}
+
+	public double radius() {
+		return radius;
 	}
 }

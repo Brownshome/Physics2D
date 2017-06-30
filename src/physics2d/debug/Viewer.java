@@ -1,6 +1,7 @@
 package physics2d.debug;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.util.*;
 
 import javax.swing.*;
@@ -38,14 +39,18 @@ public class Viewer extends JPanel {
 			repaint();
 		}).start();
 		
-		bodies = Arrays.asList(
-				new CircleBody(new Vec2(800, 400), new Vec2(-80, 0), 100),
-				new CircleBody(new Vec2(600, 380), new Vec2(80, 0), 100),
-				new CircleBody(new Vec2(400, 400), new Vec2(-80, 0), 100),
-				new CircleBody(new Vec2(200, 420), new Vec2(80, 0), 100)
-		);
+		bodies = new ArrayList<>();
 		
-		Integrator integrator = new EulerIntegrator(bodies, 0.005, 7);
+		bodies.addAll(Arrays.asList(
+				new CircleBody(new Vec2(400, 400), new Vec2(0, 0), 100),
+			    
+				new PlaneBody(new Vec2(0, 0), new Vec2(0, 1)),
+				new PlaneBody(new Vec2(0, 0), new Vec2(1, 0)),
+				new PlaneBody(new Vec2(1000, 1000), new Vec2(-1, 0)),
+				new PlaneBody(new Vec2(1000, 1000), new Vec2(0, -1))
+		));
+		
+		Integrator integrator = new EulerIntegrator(bodies, 0.005, Integer.MAX_VALUE);
 		CollisionDetector detector = new BasicCollision();
 		
 		for(RigidBody body : bodies) {
@@ -54,7 +59,21 @@ public class Viewer extends JPanel {
 		
 		ContactSolver solver = new PGSContactSolver(4, 0.9);
 		
-		world = new PhysicsWorld(detector, solver, integrator);		
+		world = new PhysicsWorld(detector, solver, integrator);
+		
+		addMouseListener(new MouseListener() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				RigidBody b = new CircleBody(new Vec2(e.getX(), e.getY()), new Vec2(/*Math.random() * 1000 - 500, Math.random() * 1000 - 500*/), Math.random() * 200 + 50);
+				bodies.add(b);
+				detector.addRigidBody(b);
+			}
+
+			@Override public void mousePressed(MouseEvent e) {}
+			@Override public void mouseReleased(MouseEvent e) {}
+			@Override public void mouseEntered(MouseEvent e) {}
+			@Override public void mouseExited(MouseEvent e) {}
+		});
 	}
 	
 	@Override
@@ -71,14 +90,15 @@ public class Viewer extends JPanel {
 		world.tickWorld(0.016);
 		
 		for(RigidBody b : bodies) {
-			paintShape(b, (Graphics2D) g);
+			if(b instanceof CircleBody)
+				paintShape((CircleBody) b, (Graphics2D) g);
 		}
 	}
 
-	private void paintShape(RigidBody b, Graphics2D g) {
-		int x = (int) (b.position().x() - 50);
-		int y = (int) (b.position().y() - 50);
+	private void paintShape(CircleBody b, Graphics2D g) {
+		int x = (int) (b.position().x() - b.radius());
+		int y = (int) (b.position().y() - b.radius());
 		
-		g.drawOval(x, y, 100, 100);
+		g.drawOval(x, y, (int) b.radius() * 2, (int) b.radius() * 2);
 	}
 }

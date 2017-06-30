@@ -18,6 +18,9 @@ public class EulerIntegrator extends Integrator{
 			Vec2 velocity = new Vec2(body.velocity());
 			velocity.scale(amount);
 			body.position().add(velocity);
+			
+			Vec2 tmp = new Vec2(0, 10);
+			body.velocity().add(tmp);
 		}
 	}
 }
