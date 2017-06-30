@@ -80,6 +80,10 @@ public class Vec2 {
 		set(x() + x, y() + y);
 	}
 	
+	public void tangent(Vec2 v) {
+		v.set(-y(), x());
+	}
+	
 	@Override
 	public String toString() {
 		return String.format("(%.3f, %.3f)", x(), y());
