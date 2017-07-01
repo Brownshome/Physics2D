@@ -14,7 +14,7 @@ public class PhysicsWorld {
 	private int internalIterations;
 	
 	public PhysicsWorld(CollisionDetector detector, ContactSolver solver, Integrator integrator) {
-		this(detector, solver, integrator, 50);
+		this(detector, solver, integrator, 1);
 	}
 	
 	public PhysicsWorld(CollisionDetector detector, ContactSolver solver, Integrator integrator, int internalIterations) {

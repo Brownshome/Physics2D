@@ -1,6 +1,6 @@
 package physics2d.collisiondetections;
 
-import physics2d.RigidBody;
+import physics2d.body.RigidBody;
 import physics2d.maths.Vec2;
 
 public class TriangleShape extends NarrowShape {

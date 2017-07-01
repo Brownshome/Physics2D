@@ -9,10 +9,11 @@ import javax.swing.Timer;
 
 import javafx.geometry.Dimension2D;
 import physics2d.*;
+import physics2d.body.*;
 import physics2d.collisiondetections.*;
 import physics2d.contactsolver.*;
 import physics2d.integration.*;
-import physics2d.maths.Vec2;
+import physics2d.maths.*;
 
 public class Viewer extends JPanel {
 	public static void main(String[] args) {
@@ -42,29 +43,31 @@ public class Viewer extends JPanel {
 		bodies = new ArrayList<>();
 		
 		bodies.addAll(Arrays.asList(
-				new CircleBody(new Vec2(400, 400), new Vec2(0, 0), 100),
+				new CircleBody(new MutableVec2(250, 500), new MutableVec2(80, 0), 40),
+				new CircleBody(new MutableVec2(500, 500), new MutableVec2(0, 0), 40),
+				new CircleBody(new MutableVec2(750, 500), new MutableVec2(-80, 0), 40),
 			    
-				new PlaneBody(new Vec2(0, 0), new Vec2(0, 1)),
-				new PlaneBody(new Vec2(0, 0), new Vec2(1, 0)),
-				new PlaneBody(new Vec2(1000, 1000), new Vec2(-1, 0)),
-				new PlaneBody(new Vec2(1000, 1000), new Vec2(0, -1))
+				new PlaneBody(new MutableVec2(0, 0), new MutableVec2(0, 1)),
+				new PlaneBody(new MutableVec2(0, 0), new MutableVec2(1, 0)),
+				new PlaneBody(new MutableVec2(1000, 1000), new MutableVec2(-1, 0)),
+				new PlaneBody(new MutableVec2(1000, 1000), new MutableVec2(0, -1))
 		));
 		
-		Integrator integrator = new EulerIntegrator(bodies, 0.005, Integer.MAX_VALUE);
+		Integrator integrator = new EulerIntegrator(bodies, 0.0005, Integer.MAX_VALUE);
 		CollisionDetector detector = new BasicCollision();
 		
 		for(RigidBody body : bodies) {
 			detector.addRigidBody(body);
 		}
 		
-		ContactSolver solver = new PGSContactSolver(4, 0.9);
+		ContactSolver solver = new PGSContactSolver(10, 0.99);
 		
 		world = new PhysicsWorld(detector, solver, integrator);
 		
 		addMouseListener(new MouseListener() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				RigidBody b = new CircleBody(new Vec2(e.getX(), e.getY()), new Vec2(/*Math.random() * 1000 - 500, Math.random() * 1000 - 500*/), Math.random() * 200 + 50);
+				RigidBody b = new CircleBody(new MutableVec2(e.getX(), e.getY()), new MutableVec2(Math.random() * 1000 - 500, Math.random() * 1000 - 500), Math.random() * 200 + 25);
 				bodies.add(b);
 				detector.addRigidBody(b);
 			}
@@ -87,12 +90,17 @@ public class Viewer extends JPanel {
 		
 		g.clearRect(0, 0, getWidth(), getHeight());
 		
-		world.tickWorld(0.016);
+		world.tickWorld(1.0 / 60);
 		
+		double energy = 0;
 		for(RigidBody b : bodies) {
-			if(b instanceof CircleBody)
+			if(b instanceof CircleBody) {
+				energy += /*(1000 - b.position().y()) * 100 +*/ b.velocity().lengthSq() * b.mass() * 0.5 / 1e6;
 				paintShape((CircleBody) b, (Graphics2D) g);
+			}
 		}
+		
+		g.drawString(String.format("%.3g", energy), 100, 100);
 	}
 
 	private void paintShape(CircleBody b, Graphics2D g) {

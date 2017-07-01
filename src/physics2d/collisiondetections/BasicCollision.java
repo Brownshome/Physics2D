@@ -2,7 +2,7 @@ package physics2d.collisiondetections;
 
 import java.util.*;
 
-import physics2d.RigidBody;
+import physics2d.body.RigidBody;
 import physics2d.contactsolver.ContactPoint;
 import physics2d.maths.Vec2;
 
@@ -42,9 +42,7 @@ public class BasicCollision implements CollisionDetector{
 	}
 	
 	private Collection<ContactPoint> properCollision(RigidBody A, RigidBody B){
-		NarrowShape narrowShapeA = A.getNarrowShape();
-		NarrowShape narrowShapeB = B.getNarrowShape();
-		return NarrowShapeCollisionDetection.getInstance().isColliding(narrowShapeA, narrowShapeB);
+		return NarrowShapeCollisionDetection.getInstance().isColliding(A, B);
 	}
 	
 }

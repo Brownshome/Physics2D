@@ -1,4 +1,4 @@
-package physics2d;
+package physics2d.body;
 
 import physics2d.collisiondetections.*;
 import physics2d.maths.*;
@@ -7,12 +7,12 @@ public class PlaneBody implements RigidBody {
 	private final NarrowShape narrowShape;
 	
 	public PlaneBody(Vec2 position, Vec2 direction) {
-		narrowShape = new PlaneShape(position, this, direction);
+		narrowShape = new PlaneShape(position, direction);
 	}
 	
 	@Override
-	public Vec2 position() {
-		return new Vec2();
+	public MutableVec2 position() {
+		return new MutableVec2();
 	}
 
 	@Override
@@ -26,8 +26,8 @@ public class PlaneBody implements RigidBody {
 	}
 
 	@Override
-	public Vec2 velocity() {
-		return new Vec2(0, 0);
+	public MutableVec2 velocity() {
+		return new MutableVec2();
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class PlaneBody implements RigidBody {
 	}
 
 	@Override
-	public void applyImpulse(Vec2 impulse, double angularImpulse) {
+	public void applyImpulse(MutableVec2 impulse, double angularImpulse) {
 		return;
 	}
 
@@ -63,5 +63,10 @@ public class PlaneBody implements RigidBody {
 	@Override
 	public double restitution() {
 		return 1.0;
+	}
+
+	@Override
+	public void angularVelocity(double x) {
+		return;
 	}
 }

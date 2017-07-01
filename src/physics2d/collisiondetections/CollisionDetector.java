@@ -2,7 +2,7 @@ package physics2d.collisiondetections;
 
 import java.util.Collection;
 
-import physics2d.RigidBody;
+import physics2d.body.RigidBody;
 import physics2d.contactsolver.ContactPoint;
 
 public interface CollisionDetector{

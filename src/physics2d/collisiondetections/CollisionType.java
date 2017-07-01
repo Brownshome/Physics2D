@@ -1,12 +1,14 @@
 package physics2d.collisiondetections;
 
+import physics2d.body.RigidBody;
+
 public class CollisionType {
 	private final int idA;
 	private final int idB;
 	
-	public CollisionType(NarrowShape A, NarrowShape B){
-		idA = A.getID();
-		idB = B.getID();
+	public CollisionType(RigidBody a, RigidBody b){
+		idA = a.getNarrowShape().getID();
+		idB = b.getNarrowShape().getID();
 	}
 	
 	public CollisionType(int A, int B){

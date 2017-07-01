@@ -2,8 +2,8 @@ package physics2d.integration;
 
 import java.util.Collection;
 
-import physics2d.RigidBody;
-import physics2d.maths.Vec2;
+import physics2d.body.RigidBody;
+import physics2d.maths.*;
 
 public class EulerIntegrator extends Integrator{
 
@@ -15,12 +15,11 @@ public class EulerIntegrator extends Integrator{
 	protected void singleStep(double amount) {
 		Collection<RigidBody> rigidBody = this.getCollection();
 		for(RigidBody body : rigidBody){
-			Vec2 velocity = new Vec2(body.velocity());
+			MutableVec2 velocity = new MutableVec2(body.velocity());
 			velocity.scale(amount);
 			body.position().add(velocity);
 			
-			Vec2 tmp = new Vec2(0, 10);
-			body.velocity().add(tmp);
+			//body.velocity().add(0, amount * 10);
 		}
 	}
 }

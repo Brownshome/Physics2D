@@ -2,7 +2,7 @@ package physics2d.collisiondetections;
 
 import java.util.Collection;
 
-import physics2d.RigidBody;
+import physics2d.body.RigidBody;
 import physics2d.contactsolver.ContactPoint;
 import physics2d.maths.Vec2;
 
@@ -12,10 +12,9 @@ public abstract class NarrowShape {
 	private int _ID;
 	private RigidBody _RigidBody;
 	
-	public NarrowShape(Vec2 position, int id, RigidBody rigidBody){
+	public NarrowShape(Vec2 position, int id){
 		_position = position;
 		_ID = id;
-		_RigidBody = rigidBody;
 	}
 	
 	public int getID(){
@@ -25,8 +24,8 @@ public abstract class NarrowShape {
 	public Vec2 getPosition(){
 		return _position;
 	}
-	
-	public RigidBody getRigidBody(){
-		return _RigidBody;
-	}
+
+	/** This method is a helper method that creates a BroadShape that surrounds
+	 * this shape. */
+	public abstract BroadShape createBoundNarrowShape();
 }

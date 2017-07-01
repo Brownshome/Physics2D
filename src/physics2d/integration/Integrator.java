@@ -2,7 +2,7 @@ package physics2d.integration;
 
 import java.util.Collection;
 
-import physics2d.RigidBody;
+import physics2d.body.RigidBody;
 
 public abstract class Integrator {
 	private final Collection<RigidBody> bodies;

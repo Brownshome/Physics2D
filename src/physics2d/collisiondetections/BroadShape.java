@@ -2,7 +2,7 @@ package physics2d.collisiondetections;
 
 import java.util.*;
 
-import physics2d.maths.Vec2;
+import physics2d.maths.*;
 
 public class BroadShape {
 	private static final BroadShape INFINITE_BROAD_SHAPE = new BroadShape(null, 0, 0) {
@@ -63,9 +63,9 @@ public class BroadShape {
 	private ArrayList<Vec2> getCorners(){
 		ArrayList<Vec2> corners = new ArrayList<Vec2>();
 		corners.add(_position);
-		Vec2 topLeftCorner = new Vec2(0, _yExtension);
-		Vec2 topRightCorner = new Vec2(_xExtension, _yExtension);
-		Vec2 bottomRightCorner = new Vec2(_xExtension, 0);
+		MutableVec2 topLeftCorner = new MutableVec2(0, _yExtension);
+		MutableVec2 topRightCorner = new MutableVec2(_xExtension, _yExtension);
+		MutableVec2 bottomRightCorner = new MutableVec2(_xExtension, 0);
 		topLeftCorner.add(_position);
 		topRightCorner.add(_position);
 		bottomRightCorner.add(_position);

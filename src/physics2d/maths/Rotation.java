@@ -1,8 +1,6 @@
 package physics2d.maths;
 
-public class Rotation extends Vec2 {
-	private double angle;
-	
+public class Rotation extends FinalVec2 {
 	public Rotation(Rotation copy) {
 		super(copy.x(), copy.y());
 	}
@@ -16,14 +14,11 @@ public class Rotation extends Vec2 {
 		super(1, 0);
 	}
 
-	public Vec2 rotate(Vec2 v) {
+	public void rotate(MutableVec2 v) {
 		double x = v.x() * x() - v.y() * y();
 		double y = v.x() * y() + v.y() * x();
 		
-		v.x(x);
-		v.y(y);
-		
-		return v;
+		v.set(x, y);
 	}
 	
 }

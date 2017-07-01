@@ -1,6 +1,6 @@
 package physics2d.collisiondetections;
 
-import physics2d.RigidBody;
+import physics2d.body.RigidBody;
 import physics2d.maths.Vec2;
 
 public class PlaneShape extends NarrowShape{
@@ -9,13 +9,18 @@ public class PlaneShape extends NarrowShape{
 	/**
 	 * @param normal points out from the side objects will bounce off 
 	 **/
-	public PlaneShape(Vec2 position, RigidBody rigidBody, Vec2 normal) {
-		super(position, 4, rigidBody);
+	public PlaneShape(Vec2 position, Vec2 normal) {
+		super(position, 4);
 		_normal = normal;
 	}
 	
 	public Vec2 getNormal(){
 		return _normal;
+	}
+
+	@Override
+	public BroadShape createBoundNarrowShape() {
+		return BroadShape.getInfiniteBroadShape();
 	}
 	
 }

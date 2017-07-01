@@ -40,14 +40,9 @@ RigidBody
 	- contains
 		Broadphase shape
 		Narrowphase shape
-		Position
-		Direction
-		Velocity
-		Mass
-		Inertia
-		
-	- refrences
-		
+		State
+		Mass statistics
+		Material
 		
 PhysicsWorld
 	- contains
