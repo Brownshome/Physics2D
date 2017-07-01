@@ -2,8 +2,8 @@ package physics2d.contactsolver;
 
 import java.util.Collection;
 
-import physics2d.RigidBody;
-import physics2d.maths.Vec2;
+import physics2d.body.RigidBody;
+import physics2d.maths.*;
 
 /** 
  * Represents a single point of contact between two objects. 
@@ -19,6 +19,10 @@ public final class ContactPoint {
 	private final double penetration;
 	/** The current impulse that has been assigned to this point. Positive impulses are attractive */
 	private double impulse;
+	/** The last delta impulse that was applied */
+	private double lastDelta;
+	/** A variable to keep track of the abs impulses applied to detect convergance */
+	private double absAccumulator;
 	/** The objects that are colliding */
 	private final RigidBody objectA, objectB;
 	private final double restitution;
@@ -43,7 +47,7 @@ public final class ContactPoint {
 	}
 
 	private double velocity(RigidBody body) {
-		Vec2 velocityA = new Vec2(position);
+		MutableVec2 velocityA = new MutableVec2(position);
 		body.convertToVelocity(velocityA);
 		return velocityA.dot(normal);
 	}
@@ -59,7 +63,7 @@ public final class ContactPoint {
 	void solveImpulse() {
 		double velocityDelta = desiredRelativeVelocity - relativeVelocity();
 		
-		Vec2 tmp = new Vec2(position);
+		MutableVec2 tmp = new MutableVec2(position);
 		tmp.subtract(objectA.position());
 		tmp.tangent();
 		double torqueA = tmp.dot(normal);
@@ -73,33 +77,36 @@ public final class ContactPoint {
 		double easeOfImpulse = objectA.inverseMass() + objectB.inverseMass()
 				+ torqueA * torqueA * objectA.inverseInertia() + torqueB * torqueB * objectB.inverseInertia();
 		
-		double deltaImpulse = velocityDelta / easeOfImpulse;
+		lastDelta = velocityDelta / easeOfImpulse;
 		
 		//apply impulse to objects
-		applyImpulse(deltaImpulse);
+		applyImpulse(lastDelta);
 		
-		impulse += deltaImpulse;
+		impulse += lastDelta;
+		absAccumulator += Math.abs(lastDelta);
 	}
 
 	private void applyImpulse(double deltaImpulse) {
-		Vec2 impulseA = new Vec2(normal);
+		MutableVec2 impulseA = new MutableVec2(normal);
 		impulseA.scale(deltaImpulse);
 		objectA.applyImpulse(impulseA, 0);
 		
-		Vec2 impulseB = new Vec2(normal);
+		MutableVec2 impulseB = new MutableVec2(normal);
 		impulseB.scale(-deltaImpulse);
 		objectB.applyImpulse(impulseB, 0);
 	}
 	
 	/** Returns a double in the range [0, 1] that
-	 * represents how closely the velocity constraint is met.
+	 * represents how close the contact is to converging compared to the total impulse
+	 * applied.
 	 * 
 	 * A value of 0 means that the constraint is not met and a value of 1 means
 	 * the constraint is met perfectly */
-	double accuracy() {
-		double rawAccuracy = Math.abs(relativeVelocity() - desiredRelativeVelocity);
+	double convergance() {
+		if(absAccumulator < Double.MIN_NORMAL)
+			return 1.0;
 		
-		return 1.0 - Math.min(Math.max(rawAccuracy / Math.max(Math.abs(desiredRelativeVelocity), 1e-6), 1.0), 0.0);
+		return 1.0 - Math.abs(lastDelta) / absAccumulator;
 	}
 
 	void clampImpulse() {
