@@ -64,7 +64,7 @@ public class Viewer extends JPanel {
 		addMouseListener(new MouseListener() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				RigidBody b = new CircleBody(new Vec2(e.getX(), e.getY()), new Vec2(/*Math.random() * 1000 - 500, Math.random() * 1000 - 500*/), Math.random() * 200 + 50);
+				RigidBody b = new CircleBody(new Vec2(e.getX(), e.getY()), new Vec2(Math.random() * 1000 - 500, Math.random() * 1000 - 500), Math.random() * 200 + 50);
 				bodies.add(b);
 				detector.addRigidBody(b);
 			}
