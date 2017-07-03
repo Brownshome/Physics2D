@@ -5,10 +5,10 @@ import java.util.function.ToDoubleFunction;
 import physics2d.body.RigidBody;
 import physics2d.maths.*;
 
+
 public class LineShape extends NarrowShape {
 	private Vec2 _direction;
 	private double _length;
-	
 	
 	public LineShape(Vec2 position, double length, Vec2 direction) {
 		super(position, 5);
