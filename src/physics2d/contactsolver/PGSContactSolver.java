@@ -35,7 +35,6 @@ public class PGSContactSolver implements ContactSolver {
 		
 		//finalise points
 		for(ContactPoint point : contactPoints) {
-			point.clampImpulse();
 			point.removePenetration();
 		}
 	}
