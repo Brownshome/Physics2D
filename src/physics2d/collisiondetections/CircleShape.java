@@ -20,7 +20,6 @@ public class CircleShape extends NarrowShape{
 
 	@Override
 	public BroadShape createBoundNarrowShape() {
-		Vec2 topCorner = new BoundVec2(getPosition(), v -> v.x() - getRadius(), v -> v.y() - getRadius());
-		return new BroadShape(topCorner, _radius * 2, _radius * 2);
+		return BroadShape.getInfiniteBroadShape();
 	}
 }

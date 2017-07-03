@@ -79,11 +79,12 @@ public final class ContactPoint {
 		
 		lastDelta = velocityDelta / easeOfImpulse;
 		
-		//apply impulse to objects
-		applyImpulse(lastDelta);
-		
-		impulse += lastDelta;
-		absAccumulator += Math.abs(lastDelta);
+		if(impulse + lastDelta < 0) {
+			//apply impulse to objects
+			impulse += lastDelta;
+			absAccumulator += Math.abs(lastDelta);
+			applyImpulse(lastDelta);
+		}
 	}
 
 	private void applyImpulse(double deltaImpulse) {
@@ -107,12 +108,6 @@ public final class ContactPoint {
 			return 1.0;
 		
 		return 1.0 - Math.abs(lastDelta) / absAccumulator;
-	}
-
-	void clampImpulse() {
-		if(impulse > 0) {
-			applyImpulse(-impulse);
-		}
 	}
 
 	void removePenetration() {
