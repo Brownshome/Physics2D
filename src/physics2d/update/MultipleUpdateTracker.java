@@ -1,40 +1,40 @@
 package physics2d.update;
 
-import java.util.Collection;
+import java.util.*;
 
 /** This class keeps track of multiple update sources */
 public class MultipleUpdateTracker implements UpdateTracker {
-	private Collection<UpdateSource> sources;
+	private Collection<UpdateTracker> trackers;
 	private int counter = -1;
 	
-	public MultipleUpdateTracker(Collection<UpdateSource> sources) {
-		this.sources = sources;
+	public MultipleUpdateTracker(UpdateSource... sources) {
+		UpdateTracker[] trackerArray = new UpdateTracker[sources.length];
+
+		for(int i = 0; i < sources.length; i++) {
+			trackerArray[i] = new SingleUpdateTracker(sources[i]);
+		}
+		
+		trackers = Arrays.asList(trackerArray);
 	}
 
+	public MultipleUpdateTracker(Collection<UpdateTracker> trackers) {
+		this.trackers = trackers;
+	}
+	
 	@Override
 	public boolean needsUpdate() {
-		int sum = sum();
-		
-		if(sum != counter) {
-			counter = sum - 1;
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	private int sum() {
-		int sum = 0;
-		
-		for(UpdateSource source : sources) {
-			sum += source.getState();
+		for(UpdateTracker tracker : trackers) {
+			if(tracker.needsUpdate())
+				return true;
 		}
 		
-		return sum;
+		return false;
 	}
 	
 	@Override
 	public void setUpToDate() {
-		counter = sum();
+		for(UpdateTracker tracker : trackers) {
+			tracker.setUpToDate();
+		}
 	}
 }
