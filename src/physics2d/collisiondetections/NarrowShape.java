@@ -5,7 +5,10 @@ import java.util.Collection;
 import physics2d.body.RigidBody;
 import physics2d.contactsolver.ContactPoint;
 import physics2d.maths.Vec2;
+import physics2d.update.*;
 
+/** Represents the narrow phase collision object. These objects can rotate and move but all other
+ * properties are immutable. */
 public abstract class NarrowShape {
 	private Vec2 _position;
 	private Collection<NarrowShape> _shapes;
@@ -27,5 +30,5 @@ public abstract class NarrowShape {
 
 	/** This method is a helper method that creates a BroadShape that surrounds
 	 * this shape. */
-	public abstract BroadShape createBoundNarrowShape();
+	public abstract BroadShape createBoundBroadShape();
 }

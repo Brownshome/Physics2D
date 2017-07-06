@@ -21,6 +21,10 @@ public class MultipleUpdateTracker implements UpdateTracker {
 		this.trackers = trackers;
 	}
 	
+	public MultipleUpdateTracker(UpdateTracker... trackers) {
+		this(Arrays.asList(trackers));
+	}
+	
 	@Override
 	public boolean needsUpdate() {
 		for(UpdateTracker tracker : trackers) {

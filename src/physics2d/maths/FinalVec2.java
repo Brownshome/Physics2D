@@ -1,12 +1,9 @@
 package physics2d.maths;
 
 public class FinalVec2 implements Vec2 {
-	private final double x, y;
+	public static final Vec2 ZERO = new FinalVec2(0, 0);
 	
-	public FinalVec2() {
-		x = 0;
-		y = 0;
-	}
+	private final double x, y;
 	
 	public FinalVec2(double x, double y) {
 		this.x = x;
@@ -27,5 +24,9 @@ public class FinalVec2 implements Vec2 {
 	public double y() {
 		return y;
 	}
-
+	
+	@Override
+	public String toString() {
+		return String.format("(%.3f, %.3f)", x(), y());
+	}
 }

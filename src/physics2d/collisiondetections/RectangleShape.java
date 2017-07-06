@@ -1,11 +1,14 @@
 package physics2d.collisiondetections;
 
+import java.util.ArrayList;
+
 import physics2d.maths.*;
+import physics2d.update.*;
 
 public class RectangleShape extends NarrowShape{
-	private double _width;
-	private double _height;
-	private Rotation _rotation;
+	private final double _width;
+	private final double _height;
+	private final Rotation _rotation;
 	
 	/**
 	 * @param position The centre of the rectangle
@@ -33,7 +36,21 @@ public class RectangleShape extends NarrowShape{
 	}
 
 	@Override
-	public BroadShape createBoundNarrowShape() {
-		return BroadShape.getInfiniteBroadShape();
+	public BroadShape createBoundBroadShape() {
+		return new BoundBroadShape(new MultipleUpdateTracker(new Vec2UpdateTracker(getPosition()), new Vec2UpdateTracker(getRotation()))) {
+			@Override protected void update() {
+				double w = getWidth();
+				double h = getHeight();
+				Rotation r = getRotation();
+				
+				MutableVec2 extent = new MutableVec2();
+				//|w cos a| + |h sin a|, |h cos a| + |w sin a|
+				extent.x(Math.abs(w * r.x()) + Math.abs(h * r.y()));
+				extent.y(Math.abs(h * r.x()) + Math.abs(w * r.y()));
+				
+				_xExtension = extent.x();
+				_yExtension = extent.y();
+			}
+		};
 	}
 }

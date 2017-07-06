@@ -12,9 +12,10 @@ public class BroadShape {
 		}
 	};
 	
+	//Made protected so they can be updated by bound subclasses
 	private Vec2 _position;
-	private double _xExtension;
-	private double _yExtension;
+	protected double _xExtension;
+	protected double _yExtension;
 	
 	//constructed using the bottom left corner of the box, with the width and height of the box.
 	public BroadShape(Vec2 position, double width, double height){
@@ -31,13 +32,6 @@ public class BroadShape {
 		if(other == INFINITE_BROAD_SHAPE) {
 			return true;
 		}
-		
-		/*if(_position.x() > other._position.x() + other._xExtension) return false;
-		if(other._position.x() > _position.x() + _xExtension) return false;
-		if(_position.y() > other._position.y() + other._yExtension) return false;
-		if(other._position.y() > _position.y() + _yExtension) return false;
-		
-		return true;*/
 		
 		List<Vec2> boundariesA = getCorners();
 		List<Vec2> boundariesB = other.getCorners();
@@ -59,16 +53,20 @@ public class BroadShape {
 		return false;
 	}
 	
+	protected Vec2 getPosition() {
+		return _position;
+	}
+	
 	//returns the corner positions of the Shape's general Bounding Box.
-	private ArrayList<Vec2> getCorners(){
+	protected ArrayList<Vec2> getCorners(){
 		ArrayList<Vec2> corners = new ArrayList<Vec2>();
-		corners.add(_position);
+		corners.add(getPosition());
 		MutableVec2 topLeftCorner = new MutableVec2(0, _yExtension);
 		MutableVec2 topRightCorner = new MutableVec2(_xExtension, _yExtension);
 		MutableVec2 bottomRightCorner = new MutableVec2(_xExtension, 0);
-		topLeftCorner.add(_position);
-		topRightCorner.add(_position);
-		bottomRightCorner.add(_position);
+		topLeftCorner.add(getPosition());
+		topRightCorner.add(getPosition());
+		bottomRightCorner.add(getPosition());
 		corners.add(topLeftCorner);
 		corners.add(topRightCorner);
 		corners.add(bottomRightCorner);

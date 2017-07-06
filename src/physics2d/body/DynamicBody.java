@@ -12,12 +12,10 @@ public class DynamicBody implements RigidBody {
 	private final double mass, inertia, restitution;
 	private double angularVelocity;
 	
-	private final BroadShape broadShape;
-	private final NarrowShape narrowShape;
+	private NarrowShape narrowShape;
+	private BroadShape broadShape;
 	
-	public DynamicBody(MutableVec2 position, Rotation direction, MutableVec2 velocity, double angularVelocity,
-			BroadShape broadShape, NarrowShape narrowShape, double mass, double inertia, double restitution) {
-		
+	public DynamicBody(MutableVec2 position, Rotation direction, MutableVec2 velocity, double angularVelocity, double mass, double inertia, double restitution) {
 		this.position = position;
 		this.velocity = velocity;
 		this.direction = direction;
@@ -25,14 +23,6 @@ public class DynamicBody implements RigidBody {
 		this.mass = mass;
 		this.inertia = inertia;
 		this.restitution = restitution;
-		this.broadShape = broadShape;
-		this.narrowShape = narrowShape;
-	}
-	
-	public DynamicBody(MutableVec2 position, Rotation direction, MutableVec2 velocity, double angularVelocity,
-			NarrowShape narrowShape, double mass, double inertia, double restitution) {
-		this(position, direction, velocity, angularVelocity, narrowShape.createBoundNarrowShape(), narrowShape,
-				mass, inertia, restitution);
 	}
 
 	@Override
@@ -75,6 +65,17 @@ public class DynamicBody implements RigidBody {
 		return true;
 	}
 
+	protected void setCollisionShapes(BroadShape broadShape, NarrowShape narrowShape) {
+		assert this.narrowShape == null && this.broadShape == null;
+		
+		this.narrowShape = narrowShape;
+		this.broadShape = broadShape;
+	}
+	
+	protected void setCollisionShapes(NarrowShape narrowShape) {
+		setCollisionShapes(narrowShape.createBoundBroadShape(), narrowShape);
+	}
+	
 	@Override
 	public BroadShape getBroadShape() {
 		return broadShape;

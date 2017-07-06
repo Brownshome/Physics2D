@@ -19,8 +19,7 @@ public class PlaneShape extends NarrowShape{
 	}
 
 	@Override
-	public BroadShape createBoundNarrowShape() {
+	public BroadShape createBoundBroadShape() {
 		return BroadShape.getInfiniteBroadShape();
 	}
-	
 }

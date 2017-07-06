@@ -12,7 +12,7 @@ public class Vec2UpdateTracker implements UpdateTracker {
 	
 	@Override
 	public boolean needsUpdate() {
-		return !cache.equals(source);
+		return !cache.exactEquals(source);
 	}
 
 	@Override

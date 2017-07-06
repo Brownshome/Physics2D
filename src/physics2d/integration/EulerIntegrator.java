@@ -15,6 +15,9 @@ public class EulerIntegrator extends Integrator{
 	protected void singleStep(double amount) {
 		Collection<RigidBody> rigidBody = this.getCollection();
 		for(RigidBody body : rigidBody){
+			if(!body.canMove())
+				continue;
+			
 			MutableVec2 velocity = new MutableVec2(body.velocity());
 			velocity.scale(amount);
 			body.position().add(velocity);
