@@ -24,6 +24,18 @@ public class DynamicBody implements RigidBody {
 		this.inertia = inertia;
 		this.restitution = restitution;
 	}
+	
+	public DynamicBody(MutableVec2 position, Rotation direction, MutableVec2 velocity, double angularVelocity, BroadShape broadShape, NarrowShape narrowShape, double mass, double inertia, double restitution) {
+		this.position = position;
+		this.velocity = velocity;
+		this.direction = direction;
+		this.angularVelocity = angularVelocity;
+		this.mass = mass;
+		this.inertia = inertia;
+		this.restitution = restitution;
+		this.broadShape = broadShape;
+		this.narrowShape = narrowShape;
+	}
 
 	@Override
 	public MutableVec2 position() {

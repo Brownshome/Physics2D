@@ -160,11 +160,11 @@ public class NarrowShapeCollisionDetection {
 			
 			/*checks if that point of intersection is beyond the size of the lines*/
 			if(Math.abs(secondScale) < line.getLength()){
-				double penetration = line.getLength() * line.getDirection().x() - firstScale * line.getDirection().x();
+				double penetration = line.getLength() - Math.abs(secondScale);
 				MutableVec2 position = new MutableVec2(line.getDirection());
-				position.scale(firstScale);
+				position.scale(Math.abs(secondScale));
 				position.add(line.getPosition());
-				output.add(new ContactPoint(penetration, position, plane.getNormal(), A, B));
+				output.add(new ContactPoint(penetration, position, plane.getNormal(), B, A));
 			}
 		} else {
 			
@@ -253,50 +253,9 @@ public class NarrowShapeCollisionDetection {
 		double yScale = firstLine.getPosition().y() / secondLine.getPosition().y();
 		
 		if(xScale - yScale <= 0.0001){
-			MutableVec2 vect1;
-			MutableVec2 vect2;
 			
-			MutableVec2 position1 = new MutableVec2(firstLine.getDirection());
-			position1.scale(-firstLine.getLength());
-			position1.add(firstLine.getPosition());
-			
-			MutableVec2 position2 = new MutableVec2(secondLine.getDirection());
-			position2.scale(secondLine.getLength());
-			position2.add(secondLine.getPosition());
-			
-			MutableVec2 difference = new MutableVec2(position2);
-			difference.subtract(position1);
-			if(xScale < 1 && difference.length() < firstLine.getLength() * 2 + secondLine.getLength() * 2){
-				vect1 = new MutableVec2(difference);
-				vect1.scale(1 / vect1.length());
-				vect2 = new MutableVec2(vect1);
-				vect1.scale(secondLine.getLength() * 2);
-				difference.subtract(vect1);
-				
-				vect2.scale(-1);
-				vect2.scale(firstLine.getLength() * 2);
-				vect2.add(vect1);
-				
-				MutableVec2 normal = new MutableVec2(firstLine.getDirection());
-				normal.tangent();
-				normal.scale(-1);
-				
-			}
-			
-			position1 = new MutableVec2(firstLine.getDirection());
-			position1.scale(firstLine.getLength());
-			position1.add(firstLine.getPosition());
-			
-			position2 = new MutableVec2(secondLine.getDirection());
-			position2.scale(-secondLine.getLength());
-			position2.add(secondLine.getPosition());
-			
-			difference = new MutableVec2(position1);
-			difference.subtract(position2);
-			if(xScale > 1 && difference.length() < firstLine.getLength() * 2 + secondLine.getLength() * 2){
-				
-			}
 		}
+		
 		return output;
 	}
 }
