@@ -44,4 +44,8 @@ public interface Vec2 {
 	default double distance(Vec2 position) {
 		return Math.sqrt(position.distanceSq(this));
 	}
+	
+	default boolean exactEquals(Vec2 other) {
+		return x() == other.x() && y() == other.y();
+	}
 }

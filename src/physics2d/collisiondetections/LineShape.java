@@ -1,9 +1,11 @@
 package physics2d.collisiondetections;
 
+import java.util.Arrays;
 import java.util.function.ToDoubleFunction;
 
 import physics2d.body.RigidBody;
 import physics2d.maths.*;
+import physics2d.update.*;
 
 
 public class LineShape extends NarrowShape {
@@ -40,7 +42,18 @@ public class LineShape extends NarrowShape {
 	}
 
 	@Override
-	public BroadShape createBoundNarrowShape() {
-		return BroadShape.getInfiniteBroadShape();
+	public BroadShape createBoundBroadShape() {
+		return new BoundBroadShape(new Vec2UpdateTracker(getPosition())) {
+			@Override protected void update() {
+				MutableVec2 scaledDirection = new MutableVec2(_direction);
+				scaledDirection.scale(_length);
+				
+				getPosition().set(LineShape.this.getPosition());
+				getPosition().add(Math.min(0, getDirection().x() * getLength()), Math.min(0, getDirection().y() * getLength()));
+				
+				_xExtension = Math.min(0, getDirection().x() * getLength());
+				_yExtension = Math.min(0, getDirection().y() * getLength());
+			}
+		};
 	}
 }

@@ -12,12 +12,14 @@ public class PlaneBody implements RigidBody {
 	
 	@Override
 	public MutableVec2 position() {
-		return new MutableVec2();
+		assert false;
+		return null;
 	}
 
 	@Override
 	public Rotation direction() {
-		return new Rotation();
+		assert false;
+		return null;
 	}
 
 	@Override
@@ -27,7 +29,8 @@ public class PlaneBody implements RigidBody {
 
 	@Override
 	public MutableVec2 velocity() {
-		return new MutableVec2();
+		assert false;
+		return null;
 	}
 
 	@Override

@@ -32,6 +32,8 @@ public final class ContactPoint {
 	
 	/** All inputs are safe and do not need to be copied */
 	public ContactPoint(double penetration, Vec2 position, Vec2 normal, RigidBody a, RigidBody b) {
+		assert a.canMove() || b.canMove();
+		
 		this.position = position;
 		this.normal = normal;
 		this.impulse = 0;
@@ -47,6 +49,10 @@ public final class ContactPoint {
 	}
 
 	private double velocity(RigidBody body) {
+		if(!body.canMove()) {
+			return 0;
+		}
+		
 		MutableVec2 velocityA = new MutableVec2(position);
 		body.convertToVelocity(velocityA);
 		return velocityA.dot(normal);
@@ -62,21 +68,26 @@ public final class ContactPoint {
 	
 	void solveImpulse() {
 		double velocityDelta = desiredRelativeVelocity - relativeVelocity();
+		double easeOfImpulse = objectA.inverseMass() + objectB.inverseMass();
 		
-		MutableVec2 tmp = new MutableVec2(position);
-		tmp.subtract(objectA.position());
-		tmp.tangent();
-		double torqueA = tmp.dot(normal);
+		MutableVec2 tmp = new MutableVec2();
+		if(objectA.canMove()) {
+			tmp.set(position);
+			tmp.subtract(objectA.position());
+			tmp.tangent();
+			double torqueA = tmp.dot(normal);
+			
+		}
 		
-		tmp.set(position);
-		tmp.subtract(objectB.position());
-		tmp.tangent();
-		double torqueB = tmp.dot(normal);
+		if(objectB.canMove()) {
+			tmp.set(position);
+			tmp.subtract(objectB.position());
+			tmp.tangent();
+			double torqueB = tmp.dot(normal);
+			easeOfImpulse += torqueB * torqueB * objectB.inverseInertia();
+		}
 		
 		//apply impulse
-		double easeOfImpulse = objectA.inverseMass() + objectB.inverseMass()
-				+ torqueA * torqueA * objectA.inverseInertia() + torqueB * torqueB * objectB.inverseInertia();
-		
 		lastDelta = velocityDelta / easeOfImpulse;
 		
 		if(impulse + lastDelta < 0) {
