@@ -15,7 +15,13 @@ public class LineBody extends DynamicBody{
 	}
 	
 	public LineBody(MutableVec2 position, MutableVec2 velocity, MutableVec2 direction, double length) {
-		super(position, new MutableRotation(), velocity, 0 ,new BroadShape(position, direction.y() * length, direction.x() * length), new LineShape(position, length, direction), 1, 100, 1.0);
+		super(position, new MutableRotation(), velocity, 0, 1, 100, 1.0);
+		MutableVec2 realPos = new MutableVec2(position);
+		realPos.add(-Math.abs(direction.x()) * length, -Math.abs(direction.y()) * length);
+		
+		BroadShape broadShape = new BroadShape(realPos, Math.abs(direction.y()) * length * 2, Math.abs(direction.x()) * length * 2);
+		LineShape lineShape = new LineShape(position, length, direction);
+		setCollisionShapes(broadShape, lineShape);
 	}
 	
 }

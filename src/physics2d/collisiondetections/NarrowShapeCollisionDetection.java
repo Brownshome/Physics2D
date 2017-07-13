@@ -164,7 +164,7 @@ public class NarrowShapeCollisionDetection {
 				MutableVec2 position = new MutableVec2(line.getDirection());
 				position.scale(Math.abs(secondScale));
 				position.add(line.getPosition());
-				output.add(new ContactPoint(penetration, position, plane.getNormal(), B, A));
+				output.add(new ContactPoint(penetration, position, plane.getNormal(), A, B));
 			}
 		} else {
 			

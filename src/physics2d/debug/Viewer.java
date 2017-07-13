@@ -43,7 +43,7 @@ public class Viewer extends JPanel {
 		bodies = new ArrayList<>();
 		
 		bodies.addAll(Arrays.asList(
-				new LineBody(new MutableVec2(500, 500), new MutableVec2(0, 50), new MutableVec2(0.7071067811865475, 0.7071067811865475), 100.0),
+				new LineBody(new MutableVec2(500, 500), new MutableVec2(0, -50), new MutableVec2(0.7071067811865475, 0.7071067811865475), 100.0),
 				new LineBody(new MutableVec2(500, 200), new MutableVec2(0, 50), new MutableVec2(-0.7071067811865475, 0.7071067811865475), 100.0),
 				
 				//new CircleBody(new MutableVec2(250, 500), new MutableVec2(80, 0), 40),
