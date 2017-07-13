@@ -43,9 +43,12 @@ public class Viewer extends JPanel {
 		bodies = new ArrayList<>();
 		
 		bodies.addAll(Arrays.asList(
-				new CircleBody(new MutableVec2(250, 500), new MutableVec2(80, 0), 40),
-				new CircleBody(new MutableVec2(500, 500), new MutableVec2(0, 0), 40),
-				new CircleBody(new MutableVec2(750, 500), new MutableVec2(-80, 0), 40),
+				new LineBody(new MutableVec2(500, 500), new MutableVec2(0, 50), new MutableVec2(0, 1), 100.0),
+				new LineBody(new MutableVec2(500, 200), new MutableVec2(0, 50), new MutableVec2(1, 0), 100.0),
+				
+				//new CircleBody(new MutableVec2(250, 500), new MutableVec2(80, 0), 40),
+				//new CircleBody(new MutableVec2(500, 500), new MutableVec2(0, 0), 40),
+				//new CircleBody(new MutableVec2(750, 500), new MutableVec2(-80, 0), 40),
 			    
 				new PlaneBody(new MutableVec2(0, 0), new MutableVec2(0, 1)),
 				new PlaneBody(new MutableVec2(0, 0), new MutableVec2(1, 0)),
@@ -96,17 +99,30 @@ public class Viewer extends JPanel {
 		for(RigidBody b : bodies) {
 			if(b instanceof CircleBody) {
 				energy += /*(1000 - b.position().y()) * 100 +*/ b.velocity().lengthSq() * b.mass() * 0.5 / 1e6;
-				paintShape((CircleBody) b, (Graphics2D) g);
+				paintCircle((CircleBody) b, (Graphics2D) g);
+			}
+			if(b instanceof LineBody) {
+				LineShape x = (LineShape) b.getNarrowShape();
+				paintLine(x, (Graphics2D) g);
 			}
 		}
 		
 		g.drawString(String.format("%.3g", energy), 100, 100);
 	}
 
-	private void paintShape(CircleBody b, Graphics2D g) {
+	private void paintCircle(CircleBody b, Graphics2D g) {
 		int x = (int) (b.position().x() - b.radius());
 		int y = (int) (b.position().y() - b.radius());
 		
 		g.drawOval(x, y, (int) b.radius() * 2, (int) b.radius() * 2);
+	}
+	
+	private void paintLine(LineShape b, Graphics2D g) {
+		int x1 = (int) (b.getPosition().x() - b.getDirection().x() * b.getLength());
+		int y1 = (int) (b.getPosition().y() - b.getDirection().y() * b.getLength());
+		int x2 = (int) (b.getPosition().x() + b.getDirection().x() * b.getLength());
+		int y2 = (int) (b.getPosition().y() + b.getDirection().y() * b.getLength());
+		
+		g.drawLine(x1, y1, x2, y2);
 	}
 }

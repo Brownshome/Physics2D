@@ -10,7 +10,7 @@ public abstract class NarrowShape {
 	private Vec2 _position;
 	private Collection<NarrowShape> _shapes;
 	private int _ID;
-	private RigidBody _RigidBody;
+	private RigidBody _rigidBody;
 	
 	public NarrowShape(Vec2 position, int id){
 		_position = position;
@@ -23,6 +23,10 @@ public abstract class NarrowShape {
 	
 	public Vec2 getPosition(){
 		return _position;
+	}
+	
+	public void addShape(NarrowShape shape){
+		_shapes.add(shape);
 	}
 
 	/** This method is a helper method that creates a BroadShape that surrounds

@@ -30,6 +30,17 @@ public class NarrowShapeCollisionDetection {
 		_HashMap.put(new CollisionType(5, 1), this::lineCircleCollision);
 		_HashMap.put(new CollisionType(1, 5), (a, b) -> lineCircleCollision(b, a));
 		_HashMap.put(new CollisionType(5, 5), this::lineLineCollision);
+		_HashMap.put(new CollisionType(3, 1), this::triangleCircleCollision);
+		_HashMap.put(new CollisionType(3, 2), this::triangleRectangleCollision);
+		_HashMap.put(new CollisionType(3, 3), this::triangleTriangleCollision);
+		_HashMap.put(new CollisionType(3, 4), (a, b) -> planeTriangleCollision(b, a));
+		_HashMap.put(new CollisionType(3, 5), this::triangleLineCollision);
+		_HashMap.put(new CollisionType(1, 3), (a, b) -> triangleCircleCollision(b, a));
+		_HashMap.put(new CollisionType(2, 3), (a, b) -> triangleRectangleCollision(b, a));
+		_HashMap.put(new CollisionType(4, 3), this::planeTriangleCollision);
+		_HashMap.put(new CollisionType(5, 3), (a, b) -> triangleLineCollision(b, a));
+		
+		
 	}
 
 	public static NarrowShapeCollisionDetection getInstance(){
@@ -42,6 +53,31 @@ public class NarrowShapeCollisionDetection {
 
 	public Collection<ContactPoint> isColliding(RigidBody A, RigidBody B){
 		return _HashMap.get(new CollisionType(A, B)).generateContactPoints(A, B);
+	}
+	
+	private Collection<ContactPoint> triangleCircleCollision(RigidBody A, RigidBody B){
+		assert false;
+		return null;
+	}
+	
+	private Collection<ContactPoint> triangleRectangleCollision(RigidBody A, RigidBody B){
+		assert false;
+		return null;
+	}
+	
+	private Collection<ContactPoint> triangleTriangleCollision(RigidBody A, RigidBody B){
+		assert false;
+		return null;
+	}
+	
+	private Collection<ContactPoint> planeTriangleCollision(RigidBody A, RigidBody B){
+		assert false;
+		return null;
+	}
+	
+	private Collection<ContactPoint> triangleLineCollision(RigidBody A, RigidBody B){
+		assert false;
+		return null;
 	}
 
 	private Collection<ContactPoint> circleCircleCollision(RigidBody A, RigidBody B){
@@ -109,10 +145,31 @@ public class NarrowShapeCollisionDetection {
 		PlaneShape plane = (PlaneShape) A.getNarrowShape();
 		LineShape line = (LineShape) B.getNarrowShape();
 		Collection<ContactPoint> output = new ArrayList<>();
+		MutableVec2 direction = new MutableVec2(plane.getNormal());
+		direction.tangent();
+		MutableVec2 distance = new MutableVec2(line.getPosition());
+		distance.subtract(plane.getPosition());
+		
+		if(line.getDirection().x() != direction.x() && line.getDirection().y() != direction.y()){
+			/*checks where the theoretical intersection point would be*/
+			double secondScale = ((distance.x() * direction.y()) - (distance.y() * direction.x())) / 
+					((direction.y() * line.getDirection().x()) - (line.getDirection().y() * direction.x())); 	
 
-		assert false;
-
-		return null;
+			double firstScale = ((distance.y() * line.getDirection().x()) - (distance.x() * line.getDirection().y())) / 
+					((direction.y() * line.getDirection().x()) - (line.getDirection().y() * direction.x())); 	
+			
+			/*checks if that point of intersection is beyond the size of the lines*/
+			if(Math.abs(secondScale) < line.getLength()){
+				double penetration = line.getLength() * line.getDirection().x() - firstScale * line.getDirection().x();
+				MutableVec2 position = new MutableVec2(line.getDirection());
+				position.scale(firstScale);
+				position.add(line.getPosition());
+				output.add(new ContactPoint(penetration, position, plane.getNormal(), A, B));
+			}
+		} else {
+			
+		}
+		return output;
 	}
 
 	private Collection<ContactPoint> lineRectangleCollision(RigidBody A, RigidBody B){
@@ -131,14 +188,14 @@ public class NarrowShapeCollisionDetection {
 
 		double distance = normal.dot(circle.getPosition()) - normal.dot(line.getPosition());
 
-		if(distance < circle.getRadius()){
+		if(Math.abs(distance) < circle.getRadius()){
 			double penetration = circle.getRadius() - distance;
 
 			MutableVec2 circleToLine = new MutableVec2(normal);
 			circleToLine.scale(-distance - penetration / 2);
-			circleToLine.add(circle.getPosition());
 
 			if(line.getLine().length() > circleToLine.length()){
+				circleToLine.add(circle.getPosition());
 				output.add(new ContactPoint(penetration, circleToLine, normal, A, B));
 			}
 		}
@@ -154,78 +211,92 @@ public class NarrowShapeCollisionDetection {
 
 		MutableVec2 distance = new MutableVec2(firstLine.getPosition());
 		distance.subtract(secondLine.getPosition());
+		
+		double x1 = firstLine.getDirection().x();
+		double x2 = secondLine.getDirection().x();
+		double y1 = firstLine.getDirection().y();
+		double y2 = secondLine.getDirection().y();
+		double dx = distance.x();
+		double dy = distance.y();
 
 		/*if the two lines have an intersect that is not parallel*/
-		if(firstLine.getDirection().dot(secondLine.getDirection()) > 0.01){
+		if(Math.abs(firstLine.getDirection().x()) != Math.abs(secondLine.getDirection().x()) && Math.abs(firstLine.getDirection().y()) != Math.abs(secondLine.getDirection().y())){
 			/*checks where the theoretical intersection point would be*/
-			double secondScale = ((distance.x() * firstLine.getDirection().y()) - (distance.y() * firstLine.getDirection().x())) / 
-					((firstLine.getDirection().x() * secondLine.getDirection().y()) - (firstLine.getDirection().y() * secondLine.getDirection().x())); 	
+			double secondScale = (dy * x1 - dx * y1) / (x2 * y1 - x1 * y2);
 
-			double firstScale = (distance.x() + secondScale * secondLine.getDirection().x()) / firstLine.getDirection().x();
+			double firstScale = (dy * x2 - dx * y2) / (x1 * y2 - x2 * y1);
 
 			/*checks if that point of intersection is beyond the size of the lines*/
-			if(firstScale < firstLine.getLength()){
+			if(Math.abs(firstScale) <= firstLine.getLength()){
 				MutableVec2 normal = new MutableVec2(secondLine.getDirection());
 				normal.tangent();
-				double penetration = firstLine.getLength() * firstLine.getDirection().x() - firstScale * firstLine.getDirection().x();
+				normal.scale(-1);
+				double penetration = firstLine.getLength()- Math.abs(firstScale);
 				MutableVec2 position = new MutableVec2(firstLine.getDirection());
-				position.scale(firstScale);
+				position.scale(Math.abs(firstScale));
 				position.add(firstLine.getPosition());
 				output.add(new ContactPoint(penetration, position, normal, A, B));
-			}
-
-			if(secondScale < secondLine.getLength()){
+			} 
+			if(Math.abs(firstScale) > firstLine.getLength() && Math.abs(secondScale) <= secondLine.getLength()){
 				MutableVec2 normal = new MutableVec2(firstLine.getDirection());
 				normal.tangent();
-				double penetration = secondLine.getLength() * secondLine.getDirection().x() - secondScale * secondLine.getDirection().x();
+				normal.scale(-1);
+				double penetration = secondLine.getLength() - Math.abs(secondScale);
 				MutableVec2 position = new MutableVec2(secondLine.getDirection());
-				position.scale(secondScale);
+				position.scale(Math.abs(secondScale));
 				position.add(secondLine.getPosition());
 				output.add(new ContactPoint(penetration, position, normal, A, B));
 			}
 		} 
 		/*for parallel lines*/
-		else {
-			/*implements the same logic first for the x direction then the y direction*/
-			if(firstLine.getPosition().x() == secondLine.getPosition().x()){
-				double lineOneY = firstLine.getPosition().y();
-				double lineTwoY = secondLine.getPosition().y();
-				double lineOneLength = firstLine.getLine().y();
-				double lineTwoLength = secondLine.getLine().y();
-				/*checks to see if the lines actually intersect after it is determined they are parallel*/
-				if(lineOneY + lineTwoY < lineOneLength + lineTwoLength){
-					/*finds the distance between the contact points and uses that to find the exact location of the contact points*/
-					double contactPointDifference = lineOneLength + lineTwoLength - lineOneY - lineTwoY;
-					double contactPointPos1 = lineOneY + lineOneLength - contactPointDifference;
-					double contactPointPos2 = lineTwoY + lineTwoLength - contactPointDifference;
-					MutableVec2 tangent = new MutableVec2(firstLine.getDirection());
-					tangent.tangent();
-					/*returns both contact points*/
-					output.add(new ContactPoint(contactPointDifference, new MutableVec2(firstLine.getPosition().x(), contactPointPos1), tangent , A, B));
-					tangent = new MutableVec2(secondLine.getDirection());
-					tangent.tangent();
-					output.add(new ContactPoint(contactPointDifference, new MutableVec2(secondLine.getPosition().x(), contactPointPos2), tangent , A, B));
-				}
+		double xScale = firstLine.getPosition().x() / secondLine.getPosition().x();
+		double yScale = firstLine.getPosition().y() / secondLine.getPosition().y();
+		
+		if(xScale - yScale <= 0.0001){
+			MutableVec2 vect1;
+			MutableVec2 vect2;
+			
+			MutableVec2 position1 = new MutableVec2(firstLine.getDirection());
+			position1.scale(-firstLine.getLength());
+			position1.add(firstLine.getPosition());
+			
+			MutableVec2 position2 = new MutableVec2(secondLine.getDirection());
+			position2.scale(secondLine.getLength());
+			position2.add(secondLine.getPosition());
+			
+			MutableVec2 difference = new MutableVec2(position2);
+			difference.subtract(position1);
+			if(xScale < 1 && difference.length() < firstLine.getLength() * 2 + secondLine.getLength() * 2){
+				vect1 = new MutableVec2(difference);
+				vect1.scale(1 / vect1.length());
+				vect2 = new MutableVec2(vect1);
+				vect1.scale(secondLine.getLength() * 2);
+				difference.subtract(vect1);
+				
+				vect2.scale(-1);
+				vect2.scale(firstLine.getLength() * 2);
+				vect2.add(vect1);
+				
+				MutableVec2 normal = new MutableVec2(firstLine.getDirection());
+				normal.tangent();
+				normal.scale(-1);
+				
 			}
-			if(firstLine.getPosition().y() == secondLine.getPosition().y()){
-				double lineOneX = firstLine.getPosition().x();
-				double lineTwoX = secondLine.getPosition().x();
-				double lineOneLength = firstLine.getLine().x();
-				double lineTwoLength = secondLine.getLine().x();
-				if(lineOneX + lineTwoX < lineOneLength + lineTwoLength){
-					double contactPointDifference = lineOneLength + lineTwoLength - lineOneX - lineTwoX;
-					double contactPointPos1 = lineOneX + lineOneLength - contactPointDifference;
-					double contactPointPos2 = lineTwoX + lineTwoLength - contactPointDifference;
-					MutableVec2 tangent = new MutableVec2(firstLine.getDirection());
-					tangent.tangent();
-					output.add(new ContactPoint(contactPointDifference, new MutableVec2(contactPointPos1, firstLine.getPosition().y()), tangent , A, B));
-					tangent = new MutableVec2(secondLine.getDirection());
-					tangent.tangent();
-					output.add(new ContactPoint(contactPointDifference, new MutableVec2(contactPointPos2, secondLine.getPosition().y()), tangent , A, B));
-				}
+			
+			position1 = new MutableVec2(firstLine.getDirection());
+			position1.scale(firstLine.getLength());
+			position1.add(firstLine.getPosition());
+			
+			position2 = new MutableVec2(secondLine.getDirection());
+			position2.scale(-secondLine.getLength());
+			position2.add(secondLine.getPosition());
+			
+			difference = new MutableVec2(position1);
+			difference.subtract(position2);
+			if(xScale > 1 && difference.length() < firstLine.getLength() * 2 + secondLine.getLength() * 2){
+				
 			}
 		}
-
 		return output;
 	}
 }
