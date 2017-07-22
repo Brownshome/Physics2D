@@ -11,7 +11,7 @@ public interface RigidBody {
 	/** Gets the position of the objects centre of mass in world space */
 	MutableVec2 position();
 	/** Gets the direction of the object in world space */
-	Rotation direction();
+	MutableRotation direction();
 	/** Gets the counter-clockwise rotational speed of the object in radians per second */
 	double angularVelocity();
 	/** Sets the angular velocity of the object */

@@ -9,9 +9,9 @@ import physics2d.update.*;
 
 
 public class LineShape extends NarrowShape {
-	private MutableVec2 _direction;
-	private double _length;
-
+	private final MutableVec2 _direction;
+	private final double _length;
+	
 	public LineShape(MutableVec2 position, double length, MutableVec2 direction) {
 		super(position, 5);
 		_length = length;
@@ -34,7 +34,8 @@ public class LineShape extends NarrowShape {
 	public Vec2 getDirection(){
 		return _direction;
 	}
-
+	
+	/** Returns a vector representing the displacement from one end of the line to the other */
 	public Vec2 getLine(){
 		MutableVec2 lineVector = new MutableVec2(_direction);
 		lineVector.scale(_length);

@@ -1,19 +1,16 @@
 package physics2d.maths;
 
-public class MutableRotation implements Rotation {
-	private double sin, cos;
-	
+public class MutableRotation extends MutableVec2 implements Rotation {
 	public MutableRotation(Rotation copy) {
-		this(copy.sin(), copy.cos());
+		super(copy.sin(), copy.cos());
 	}
 	
 	public MutableRotation(double angle) {
-		this(Math.cos(angle), Math.sin(angle));
+		super(Math.cos(angle), Math.sin(angle));
 	}
 	
 	public MutableRotation(double x, double y) {
-		this.sin = y;
-		this.cos = x;
+		super(x, y);
 	}
 	
 	/** The identity rotation */
@@ -23,26 +20,24 @@ public class MutableRotation implements Rotation {
 
 	@Override
 	public double sin() {
-		return sin;
+		return y();
 	}
 
 	@Override
 	public double cos() {
-		return cos;
+		return x();
+	}
+	
+	public void invert() {
+		sin(-sin());
 	}
 	
 	public void sin(double sin) {
-		this.sin = sin;
+		y(sin);
 	}
 	
 	public void cos(double cos) {
-		this.cos = cos;
-	}
-	
-	public void normalize() {
-		double r = 1.0 / length();
-		sin(sin() * r);
-		cos(cos() * r);
+		x(cos);
 	}
 	
 	@Override

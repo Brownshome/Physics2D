@@ -1,11 +1,8 @@
 package physics2d.maths;
 
-public class FinalRotation implements Rotation {
-	private final double sin, cos;
-	
+public class FinalRotation extends FinalVec2 implements Rotation {
 	public FinalRotation(double x, double y) {
-		sin = y;
-		cos = x;
+		super(x, y);
 	}
 	
 	public FinalRotation(double angle) {
@@ -22,12 +19,12 @@ public class FinalRotation implements Rotation {
 	
 	@Override
 	public double sin() {
-		return sin;
+		return y();
 	}
 
 	@Override
 	public double cos() {
-		return cos;
+		return x();
 	}
 
 	@Override

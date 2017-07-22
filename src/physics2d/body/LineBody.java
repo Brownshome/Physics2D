@@ -11,16 +11,13 @@ import physics2d.maths.Vec2;
 public class LineBody extends DynamicBody{
 	
 	public LineBody(MutableVec2 position, MutableVec2 velocity, MutableVec2 direction, double length) {
-		super(position, new MutableRotation(), velocity, 0, 1, 100, 1.0);
+		super(position, new MutableRotation(direction.x(), direction.y()), velocity, 0, 1, 1e10, 1.0);
 		LineShape lineShape = new LineShape(position, length, direction){
 			@Override
 			public Vec2 getDirection() {
-				LineBody.this.direction().rotate(direction);
-				return direction;
+				return LineBody.this.direction();
 			}
 		};
 		setCollisionShapes(lineShape);
 	}
-	
-	
 }

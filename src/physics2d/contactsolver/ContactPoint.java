@@ -10,7 +10,7 @@ import physics2d.maths.*;
  **/
 public final class ContactPoint {
 	private static double penetrationRelaxation = 0.75;
-	
+
 	/** The position of the contact in world space */
 	private final Vec2 position;
 	/** The normal of the contact going from bodyA to bodyB */
@@ -29,21 +29,21 @@ public final class ContactPoint {
 	/** The desired closing velocity */
 	private final double desiredRelativeVelocity;
 	private final double startingVelocityA, startingVelocityB;
-	
+
 	/** All inputs are safe and do not need to be copied */
 	public ContactPoint(double penetration, Vec2 position, Vec2 normal, RigidBody a, RigidBody b) {
 		assert a.canMove() || b.canMove();
-		
+
 		this.position = position;
 		this.normal = normal;
 		this.impulse = 0;
 		this.objectA = a;
 		this.objectB = b;
 		this.penetration = penetration * penetrationRelaxation;
-		
+
 		restitution = Math.min(objectA.restitution(), objectB.restitution());
 		desiredRelativeVelocity = calculateDesiredVelocity();
-		
+
 		startingVelocityA = velocity(objectA);
 		startingVelocityB = velocity(objectB);
 	}
@@ -52,7 +52,7 @@ public final class ContactPoint {
 		if(!body.canMove()) {
 			return 0;
 		}
-		
+
 		MutableVec2 velocityA = new MutableVec2(position);
 		body.convertToVelocity(velocityA);
 		return velocityA.dot(normal);
@@ -65,31 +65,25 @@ public final class ContactPoint {
 	private double calculateDesiredVelocity() {
 		return -restitution * relativeVelocity();
 	}
-	
+
 	void solveImpulse() {
 		double velocityDelta = desiredRelativeVelocity - relativeVelocity();
 		double easeOfImpulse = objectA.inverseMass() + objectB.inverseMass();
-		
+
 		MutableVec2 tmp = new MutableVec2();
 		if(objectA.canMove()) {
-			tmp.set(position);
-			tmp.subtract(objectA.position());
-			tmp.tangent();
-			double torqueA = tmp.dot(normal);
-			
+			double torqueA = torqueA();
+			easeOfImpulse += torqueA * torqueA * objectA.inverseInertia();
 		}
-		
+
 		if(objectB.canMove()) {
-			tmp.set(position);
-			tmp.subtract(objectB.position());
-			tmp.tangent();
-			double torqueB = tmp.dot(normal);
+			double torqueB = torqueB();
 			easeOfImpulse += torqueB * torqueB * objectB.inverseInertia();
 		}
-		
+
 		//apply impulse
 		lastDelta = velocityDelta / easeOfImpulse;
-		
+
 		if(impulse + lastDelta < 0) {
 			//apply impulse to objects
 			impulse += lastDelta;
@@ -99,15 +93,33 @@ public final class ContactPoint {
 	}
 
 	private void applyImpulse(double deltaImpulse) {
-		MutableVec2 impulseA = new MutableVec2(normal);
-		impulseA.scale(deltaImpulse);
-		objectA.applyImpulse(impulseA, 0);
-		
-		MutableVec2 impulseB = new MutableVec2(normal);
-		impulseB.scale(-deltaImpulse);
-		objectB.applyImpulse(impulseB, 0);
+		if(objectA.canMove()) {
+			MutableVec2 impulseA = new MutableVec2(normal);
+			impulseA.scale(deltaImpulse);
+			objectA.applyImpulse(impulseA, -deltaImpulse * torqueA());
+		}
+
+		if(objectB.canMove()) {
+			MutableVec2 impulseB = new MutableVec2(normal);
+			impulseB.scale(-deltaImpulse);
+			objectB.applyImpulse(impulseB, -deltaImpulse * torqueB());
+		}
 	}
-	
+
+	private double torqueA() {
+		MutableVec2 tmp = new MutableVec2(position);
+		tmp.subtract(objectA.position());
+		tmp.tangent();
+		return tmp.dot(normal);
+	}
+
+	private double torqueB() {
+		MutableVec2 tmp = new MutableVec2(position);
+		tmp.subtract(objectB.position());
+		tmp.tangent();
+		return tmp.dot(normal);
+	}
+
 	/** Returns a double in the range [0, 1] that
 	 * represents how close the contact is to converging compared to the total impulse
 	 * applied.
@@ -117,7 +129,7 @@ public final class ContactPoint {
 	double convergance() {
 		if(absAccumulator < Double.MIN_NORMAL)
 			return 1.0;
-		
+
 		return 1.0 - Math.abs(lastDelta) / absAccumulator;
 	}
 
@@ -128,22 +140,22 @@ public final class ContactPoint {
 		 * 
 		 * TODO handle rotational penetration relaxation
 		 */
-		
+
 		//Static object can't be moved :(
 		if(!objectA.canMove() && !objectB.canMove()) {
 			return;
 		}
-		
+
 		if(!objectA.canMove()) {
 			objectB.position().scaleAdd(normal, penetration);
 			return;
 		}
-		
+
 		if(!objectB.canMove()) {
 			objectA.position().scaleAdd(normal, -penetration);
 			return;
 		}
-		
+
 		double sum = (Math.abs(startingVelocityA) + Math.abs(startingVelocityB));
 		double moveA, moveB;
 		if(sum < 1e-6) { //Objects are not moving much at all
@@ -153,7 +165,7 @@ public final class ContactPoint {
 			moveA = -penetration * Math.abs(startingVelocityA) / sum;
 			moveB = penetration * Math.abs(startingVelocityB) / sum;
 		}
-		
+
 		objectA.position().scaleAdd(normal, moveA);
 		objectB.position().scaleAdd(normal, moveB);
 	}

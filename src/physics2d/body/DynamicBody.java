@@ -8,14 +8,14 @@ import physics2d.maths.*;
  */
 public class DynamicBody implements RigidBody {
 	private final MutableVec2 position, velocity;
-	private final Rotation direction;
+	private final MutableRotation direction;
 	private final double mass, inertia, restitution;
 	private double angularVelocity;
 	
 	private NarrowShape narrowShape;
 	private BroadShape broadShape;
 	
-	public DynamicBody(MutableVec2 position, Rotation direction, MutableVec2 velocity, double angularVelocity, double mass, double inertia, double restitution) {
+	public DynamicBody(MutableVec2 position, MutableRotation direction, MutableVec2 velocity, double angularVelocity, double mass, double inertia, double restitution) {
 		this.position = position;
 		this.velocity = velocity;
 		this.direction = direction;
@@ -25,7 +25,7 @@ public class DynamicBody implements RigidBody {
 		this.restitution = restitution;
 	}
 	
-	public DynamicBody(MutableVec2 position, Rotation direction, MutableVec2 velocity, double angularVelocity, BroadShape broadShape, NarrowShape narrowShape, double mass, double inertia, double restitution) {
+	public DynamicBody(MutableVec2 position, MutableRotation direction, MutableVec2 velocity, double angularVelocity, BroadShape broadShape, NarrowShape narrowShape, double mass, double inertia, double restitution) {
 		this.position = position;
 		this.velocity = velocity;
 		this.direction = direction;
@@ -43,7 +43,7 @@ public class DynamicBody implements RigidBody {
 	}
 
 	@Override
-	public Rotation direction() {
+	public MutableRotation direction() {
 		return direction;
 	}
 

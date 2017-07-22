@@ -17,7 +17,7 @@ public class PlaneBody implements RigidBody {
 	}
 
 	@Override
-	public Rotation direction() {
+	public MutableRotation direction() {
 		assert false;
 		return null;
 	}

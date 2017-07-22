@@ -22,6 +22,11 @@ public class EulerIntegrator extends Integrator{
 			velocity.scale(amount);
 			body.position().add(velocity);
 			
+			double angularChange = body.angularVelocity() * amount;
+			
+			Rotation deltaRotation = new FinalRotation(angularChange);
+			deltaRotation.rotate(body.direction());
+			
 			body.velocity().add(0, amount * 10);
 		}
 	}
