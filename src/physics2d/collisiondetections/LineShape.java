@@ -43,16 +43,18 @@ public class LineShape extends NarrowShape {
 
 	@Override
 	public BroadShape createBoundBroadShape() {
-		return new BoundBroadShape(new Vec2UpdateTracker(getPosition())) {
+		return new BoundBroadShape(new MultipleUpdateTracker(new Vec2UpdateTracker(getPosition()), new Vec2UpdateTracker(_direction))) {
 			@Override protected void update() {
 				MutableVec2 scaledDirection = new MutableVec2(_direction);
 				scaledDirection.scale(_length);
 				
+				//Position is the position of the line minus half the direction value.
 				getPosition().set(LineShape.this.getPosition());
-				getPosition().add(Math.min(0, getDirection().x() * getLength()), Math.min(0, getDirection().y() * getLength()));
+				getPosition().add(-Math.abs(scaledDirection.x() * 0.5), -Math.abs(scaledDirection.y() * 0.5));
 				
-				_xExtension = Math.min(0, getDirection().x() * getLength());
-				_yExtension = Math.min(0, getDirection().y() * getLength());
+				//The extension is the magnitude of the direction value
+				_xExtension = Math.abs(scaledDirection.x());
+				_yExtension = Math.abs(scaledDirection.y());
 			}
 		};
 	}
