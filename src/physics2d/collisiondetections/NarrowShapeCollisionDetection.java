@@ -220,24 +220,23 @@ public class NarrowShapeCollisionDetection {
 		double dy = distance.y();
 
 		/*if the two lines have an intersect that is not parallel*/
-		if(Math.abs(firstLine.getDirection().x()) != Math.abs(secondLine.getDirection().x()) && Math.abs(firstLine.getDirection().y()) != Math.abs(secondLine.getDirection().y())){
+		if(1 - Math.abs(firstLine.getDirection().dot(secondLine.getDirection())) > 0.0001){
 			/*checks where the theoretical intersection point would be*/
 			double secondScale = (dy * x1 - dx * y1) / (x2 * y1 - x1 * y2);
 
 			double firstScale = (dy * x2 - dx * y2) / (x1 * y2 - x2 * y1);
 
 			/*checks if that point of intersection is beyond the size of the lines*/
-			if(Math.abs(firstScale) <= firstLine.getLength()){
+			if(Math.abs(firstScale) <= firstLine.getLength() && firstLine.getLength() - Math.abs(firstScale) <= secondLine.getLength() - Math.abs(secondScale)){
 				MutableVec2 normal = new MutableVec2(secondLine.getDirection());
 				normal.tangent();
-				normal.scale(-1);
 				double penetration = firstLine.getLength()- Math.abs(firstScale);
 				MutableVec2 position = new MutableVec2(firstLine.getDirection());
 				position.scale(Math.abs(firstScale));
 				position.add(firstLine.getPosition());
 				output.add(new ContactPoint(penetration, position, normal, A, B));
 			} 
-			if(Math.abs(firstScale) > firstLine.getLength() && Math.abs(secondScale) <= secondLine.getLength()){
+			if(Math.abs(firstScale) > firstLine.getLength() && Math.abs(secondScale) <= secondLine.getLength() && firstLine.getLength() - Math.abs(firstScale) >= secondLine.getLength() - Math.abs(secondScale)){
 				MutableVec2 normal = new MutableVec2(firstLine.getDirection());
 				normal.tangent();
 				normal.scale(-1);

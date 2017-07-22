@@ -45,6 +45,8 @@ public class Viewer extends JPanel {
 		bodies.addAll(Arrays.asList(
 				new LineBody(new MutableVec2(500, 500), new MutableVec2(0, -50), new MutableVec2(0.7071067811865475, 0.7071067811865475), 100.0),
 				new LineBody(new MutableVec2(500, 200), new MutableVec2(0, 50), new MutableVec2(-0.7071067811865475, 0.7071067811865475), 100.0),
+				//new LineBody(new MutableVec2(500, 200), new MutableVec2(0, 50), new MutableVec2(0, 1), 100.0),
+				//new LineBody(new MutableVec2(500, 500), new MutableVec2(0, -50), new MutableVec2(1, 0), 100.0),
 				
 				//new CircleBody(new MutableVec2(250, 500), new MutableVec2(80, 0), 40),
 				//new CircleBody(new MutableVec2(500, 500), new MutableVec2(0, 0), 40),
@@ -97,8 +99,10 @@ public class Viewer extends JPanel {
 		
 		double energy = 0;
 		for(RigidBody b : bodies) {
-		    energy += ((1000 - b.position().y()) * 10 * b.mass() + b.velocity().lengthSq() * b.mass() * 0.5) / 1e6;
-			if(b instanceof CircleBody) {
+		    if(b.canMove()){
+		    	energy += ((1000 - b.position().y()) * 10 * b.mass() + b.velocity().lengthSq() * b.mass() * 0.5) / 1e6;
+		    }
+		    if(b instanceof CircleBody) {
 				paintCircle((CircleBody) b, (Graphics2D) g);
 			}
 			if(b instanceof LineBody) {
