@@ -22,7 +22,7 @@ public class EulerIntegrator extends Integrator{
 			velocity.scale(amount);
 			body.position().add(velocity);
 			
-			//body.velocity().add(0, amount * 10);
+			body.velocity().add(0, amount * 10);
 		}
 	}
 }

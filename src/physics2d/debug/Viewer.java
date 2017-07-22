@@ -97,8 +97,8 @@ public class Viewer extends JPanel {
 		
 		double energy = 0;
 		for(RigidBody b : bodies) {
+		    energy += ((1000 - b.position().y()) * 10 * b.mass() + b.velocity().lengthSq() * b.mass() * 0.5) / 1e6;
 			if(b instanceof CircleBody) {
-				energy += /*(1000 - b.position().y()) * 100 +*/ b.velocity().lengthSq() * b.mass() * 0.5 / 1e6;
 				paintCircle((CircleBody) b, (Graphics2D) g);
 			}
 			if(b instanceof LineBody) {
