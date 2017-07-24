@@ -39,14 +39,10 @@ public interface RigidBody {
 	 * be the velocity
 	 **/
 	default void convertToVelocity(MutableVec2 point) {
-		transformToBodyCoordinates(point);
-		
-		MutableVec2 spinVelocity = new MutableVec2();
-		spinVelocity.tangent(direction());
-		spinVelocity.scale(angularVelocity());
-		
-		point.set(velocity());
-		point.add(spinVelocity);
+		point.subtract(position());
+		point.tangent();
+		point.scale(angularVelocity());
+		point.add(velocity());
 	}
 	
 	/** 

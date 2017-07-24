@@ -92,20 +92,22 @@ public final class ContactPoint {
 		}
 	}
 
+	//Applies the force deltaImpulse along the normal to ObjectA and anti-normal to ObjectB
 	private void applyImpulse(double deltaImpulse) {
 		if(objectA.canMove()) {
 			MutableVec2 impulseA = new MutableVec2(normal);
 			impulseA.scale(deltaImpulse);
-			objectA.applyImpulse(impulseA, -deltaImpulse * torqueA());
+			objectA.applyImpulse(impulseA, deltaImpulse * torqueA());
 		}
 
 		if(objectB.canMove()) {
 			MutableVec2 impulseB = new MutableVec2(normal);
 			impulseB.scale(-deltaImpulse);
-			objectB.applyImpulse(impulseB, -deltaImpulse * torqueB());
+			objectB.applyImpulse(impulseB, deltaImpulse * torqueB());
 		}
 	}
 
+	//The torque an impulse of X will cause
 	private double torqueA() {
 		MutableVec2 tmp = new MutableVec2(position);
 		tmp.subtract(objectA.position());
@@ -113,11 +115,12 @@ public final class ContactPoint {
 		return tmp.dot(normal);
 	}
 
+	//The torque an impulse of X will cause
 	private double torqueB() {
 		MutableVec2 tmp = new MutableVec2(position);
 		tmp.subtract(objectB.position());
 		tmp.tangent();
-		return tmp.dot(normal);
+		return -tmp.dot(normal);
 	}
 
 	/** Returns a double in the range [0, 1] that

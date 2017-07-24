@@ -6,7 +6,7 @@ public class FinalRotation extends FinalVec2 implements Rotation {
 	}
 	
 	public FinalRotation(double angle) {
-		this(Math.cos(angle), Math.sin(angle));
+		this(Math.cos(angle), -Math.sin(angle));
 	}
 	
 	public FinalRotation() {

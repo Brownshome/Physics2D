@@ -75,10 +75,11 @@ public class MutableVec2 implements Vec2 {
 	}
 	
 	/**
-	 * Sets this vector to be the tangent of the given vector
+	 * Sets this vector to be the tangent of the given vector. This function rotates the vector counterclockwise in the topleft coordiante
+	 * system.
 	 */
 	public void tangent(Vec2 v) {
-		set(-v.y(), v.x());
+		set(v.y(), -v.x());
 	}
 	
 	@Override
@@ -98,5 +99,9 @@ public class MutableVec2 implements Vec2 {
 	/** Sets this vector to be the tangent of itself */
 	public void tangent() {
 		tangent(this);
+	}
+
+	public void negate() {
+		set(-x(), -y());
 	}
 }

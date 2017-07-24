@@ -1,6 +1,9 @@
 package physics2d.debug;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Polygon;
 import java.awt.event.*;
 import java.util.*;
 
@@ -43,14 +46,7 @@ public class Viewer extends JPanel {
 		bodies = new ArrayList<>();
 		
 		bodies.addAll(Arrays.asList(
-				new LineBody(new MutableVec2(500, 500), new MutableVec2(0, -50), new MutableVec2(0.7071067811865475, 0.7071067811865475), 100.0),
-				new LineBody(new MutableVec2(500, 200), new MutableVec2(0, 50), new MutableVec2(-0.7071067811865475, 0.7071067811865475), 100.0),
-				//new LineBody(new MutableVec2(500, 200), new MutableVec2(0, 50), new MutableVec2(0, 1), 100.0),
-				//new LineBody(new MutableVec2(500, 500), new MutableVec2(0, -50), new MutableVec2(1, 0), 100.0),
-				
-				//new CircleBody(new MutableVec2(250, 500), new MutableVec2(80, 0), 40),
-				//new CircleBody(new MutableVec2(500, 500), new MutableVec2(0, 0), 40),
-				//new CircleBody(new MutableVec2(750, 500), new MutableVec2(-80, 0), 40),
+				new RectangleBody(new MutableVec2(500, 500), new MutableRotation(), new MutableVec2(), 100, 100),
 			    
 				new PlaneBody(new MutableVec2(0, 0), new MutableVec2(0, 1)),
 				new PlaneBody(new MutableVec2(0, 0), new MutableVec2(1, 0)),
@@ -72,7 +68,8 @@ public class Viewer extends JPanel {
 		addMouseListener(new MouseListener() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				RigidBody b = new CircleBody(new MutableVec2(e.getX(), e.getY()), new MutableVec2(Math.random() * 1000 - 500, Math.random() * 1000 - 500), Math.random() * 200 + 25);
+				//RigidBody b = new CircleBody(new MutableVec2(e.getX(), e.getY()), new MutableVec2(Math.random() * 1000 - 500, Math.random() * 1000 - 500), Math.random() * 200 + 25);
+				RigidBody b = new RectangleBody(new MutableVec2(e.getX(), e.getY()), new MutableRotation(Math.PI / 4), new MutableVec2(100, 0), 100, 100);
 				bodies.add(b);
 				detector.addRigidBody(b);
 			}
@@ -102,16 +99,36 @@ public class Viewer extends JPanel {
 		    if(b.canMove()){
 		    	energy += ((1000 - b.position().y()) * 10 * b.mass() + b.velocity().lengthSq() * b.mass() * 0.5) / 1e6;
 		    }
+		    
 		    if(b instanceof CircleBody) {
 				paintCircle((CircleBody) b, (Graphics2D) g);
 			}
-			if(b instanceof LineBody) {
+			
+		    if(b instanceof LineBody) {
 				LineShape x = (LineShape) b.getNarrowShape();
 				paintLine(x, (Graphics2D) g);
 			}
+		    
+		    if(b instanceof RectangleBody) {
+		    	RectangleShape shape = (RectangleShape) b.getNarrowShape();
+		    	paintRectangle(shape, (Graphics2D) g);
+		    }
 		}
 		
 		g.drawString(String.format("%.3g", energy), 100, 100);
+	}
+
+	private void paintRectangle(RectangleShape shape, Graphics2D g) {
+		List<? extends Vec2> corners = shape.getCorners();
+		int[] xPoints = new int[5];
+		int[] yPoints = new int[5];
+		
+		for(int i = 0; i < 5; i++) {
+			xPoints[i] = (int) corners.get(i % 4).x();
+			yPoints[i] = (int) corners.get(i % 4).y();
+		}
+
+		g.drawPolyline(xPoints, yPoints, 5);
 	}
 
 	private void paintCircle(CircleBody b, Graphics2D g) {

@@ -18,11 +18,11 @@ public class NarrowShapeCollisionDetection {
 		_HashMap.put(new CollisionType(4, 1), this::planeCircleCollision);
 		_HashMap.put(new CollisionType(1, 4), (a, b) -> planeCircleCollision(b, a));
 		_HashMap.put(new CollisionType(4, 4), (a, b) -> Collections.emptyList());
-		_HashMap.put(new CollisionType(2, 1), this::rectangleCircleCollision);
-		_HashMap.put(new CollisionType(1, 2), (a, b) -> rectangleCircleCollision(b, a));
-		_HashMap.put(new CollisionType(4, 2), this::planeRectangleCollision);
-		_HashMap.put(new CollisionType(2, 4), (a, b) -> planeRectangleCollision(b, a));
-		_HashMap.put(new CollisionType(2, 2), this::rectangleRectangleCollision);
+		_HashMap.put(new CollisionType(2, 1), RectangleShape::rectangleCircleCollision);
+		_HashMap.put(new CollisionType(1, 2), (a, b) -> RectangleShape.rectangleCircleCollision(b, a));
+		_HashMap.put(new CollisionType(4, 2), RectangleShape::planeRectangleCollision);
+		_HashMap.put(new CollisionType(2, 4), (a, b) -> RectangleShape.planeRectangleCollision(b, a));
+		_HashMap.put(new CollisionType(2, 2), RectangleShape::rectangleRectangleCollision);
 		_HashMap.put(new CollisionType(4, 5), this::planeLineCollision);
 		_HashMap.put(new CollisionType(5, 4), (a, b) -> planeLineCollision(b, a));
 		_HashMap.put(new CollisionType(5, 2), this::lineRectangleCollision);
@@ -118,27 +118,6 @@ public class NarrowShapeCollisionDetection {
 		}
 
 		return Collections.emptyList();
-	}
-
-	private Collection<ContactPoint> rectangleCircleCollision(RigidBody A, RigidBody B){
-		RectangleShape rectangle = (RectangleShape) A.getNarrowShape();
-		CircleShape circle = (CircleShape) B.getNarrowShape();
-
-		assert false;
-
-		return null;
-	}
-
-	private Collection<ContactPoint> planeRectangleCollision(RigidBody A, RigidBody B){
-		assert false;
-
-		return null;
-	}
-
-	private Collection<ContactPoint> rectangleRectangleCollision(RigidBody A, RigidBody B){
-		assert false;
-
-		return null;
 	}
 
 	private Collection<ContactPoint> planeLineCollision(RigidBody A, RigidBody B){

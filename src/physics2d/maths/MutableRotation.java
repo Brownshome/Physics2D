@@ -2,11 +2,11 @@ package physics2d.maths;
 
 public class MutableRotation extends MutableVec2 implements Rotation {
 	public MutableRotation(Rotation copy) {
-		super(copy.sin(), copy.cos());
+		super(copy);
 	}
 	
 	public MutableRotation(double angle) {
-		super(Math.cos(angle), Math.sin(angle));
+		super(Math.cos(angle), -Math.sin(angle));
 	}
 	
 	public MutableRotation(double x, double y) {
