@@ -46,7 +46,9 @@ public class Viewer extends JPanel {
 		bodies = new ArrayList<>();
 		
 		bodies.addAll(Arrays.asList(
-				new RectangleBody(new MutableVec2(500, 500), new MutableRotation(), new MutableVec2(), 100, 100),
+				//new RectangleBody(new MutableVec2(500, 500), new MutableRotation(), new MutableVec2(), 100, 100),
+				new CircleBody(new MutableVec2(500, 500), new MutableVec2(0, -50), 100),
+				new LineBody(new MutableVec2(500, 500), new MutableVec2(0, 50), new MutableVec2(1 / Math.sqrt(2.0), 1 / Math.sqrt(2.0)), 100),
 			    
 				new PlaneBody(new MutableVec2(0, 0), new MutableVec2(0, 1)),
 				new PlaneBody(new MutableVec2(0, 0), new MutableVec2(1, 0)),

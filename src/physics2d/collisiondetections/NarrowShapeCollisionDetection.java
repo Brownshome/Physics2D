@@ -161,26 +161,39 @@ public class NarrowShapeCollisionDetection {
 		LineShape line = (LineShape) A.getNarrowShape();
 		CircleShape circle = (CircleShape) B.getNarrowShape();
 		Collection<ContactPoint> output = new ArrayList<>();
-
+		
 		MutableVec2 normal = new MutableVec2(line.getDirection());
 		normal.tangent();
-
-		double distance = normal.dot(circle.getPosition()) - normal.dot(line.getPosition());
-
-		if(Math.abs(distance) < circle.getRadius()){
+		normal.scale(-1);
+		
+		//check the distance from the centre of the circle to the "plane" of the line"
+		double distance =  normal.dot(circle.getPosition()) - normal.dot(line.getPosition());
+		
+		//check if the line is where the circle should intersect.
+		MutableVec2 position = new MutableVec2(normal);
+		position.scale(distance);
+		position.add(circle.getPosition());
+		MutableVec2 difference = new MutableVec2(position);
+		difference.subtract(line.getPosition());
+		
+		double scale;
+		if(line.getDirection().x() != 0){
+			scale = difference.x() / line.getDirection().x();
+		} else{
+			scale = difference.y() / line.getDirection().y();
+		}
+		
+		if(distance < circle.getRadius() && line.getLength() > scale){
 			double penetration = circle.getRadius() - distance;
-
+			
 			MutableVec2 circleToLine = new MutableVec2(normal);
-			circleToLine.scale(-distance - penetration / 2);
-
-			if(line.getLine().length() > circleToLine.length()){
-				circleToLine.add(circle.getPosition());
-				output.add(new ContactPoint(penetration, circleToLine, normal, A, B));
-			}
+			circleToLine.scale(-distance - penetration/2);
+			circleToLine.add(circle.getPosition());
+			output.add(new ContactPoint(penetration, circleToLine, normal, A, B));
 		}
 
 		return output;
-
+		
 	}
 
 	private Collection<ContactPoint> lineLineCollision(RigidBody A, RigidBody B){

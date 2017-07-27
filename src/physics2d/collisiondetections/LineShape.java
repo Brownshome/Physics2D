@@ -38,7 +38,7 @@ public class LineShape extends NarrowShape {
 	/** Returns a vector representing the displacement from one end of the line to the other */
 	public Vec2 getLine(){
 		MutableVec2 lineVector = new MutableVec2(_direction);
-		lineVector.scale(_length);
+		lineVector.scale(_length * 2);
 		return lineVector;
 	}
 
