@@ -104,4 +104,11 @@ public class MutableVec2 implements Vec2 {
 	public void negate() {
 		set(-x(), -y());
 	}
+	
+	/** Gets an angle between this vector and the given vector in radians*/
+	public double angle(Vec2 vec) {
+		double angle = this.dot(vec) / (this.length() * vec.length());
+		angle = Math.acos(angle);
+		return angle;
+	}
 }

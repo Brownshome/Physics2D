@@ -11,7 +11,7 @@ public class NarrowShapeCollisionDetection {
 	private Map<CollisionType, NSNSCollisionFunction> _HashMap; 
 
 
-	//id 1 = circle, id 2 = rectangle, id 3 = triangle, id 4 = plane, id 5 = line
+	//id 1 = Circle, id 3 = ConvexHull, id 4 = Plane, id 5 = Line
 	private  NarrowShapeCollisionDetection(){
 		_HashMap = new HashMap<>();
 		_HashMap.put(new CollisionType(1,1), this::circleCircleCollision);
@@ -25,20 +25,16 @@ public class NarrowShapeCollisionDetection {
 		_HashMap.put(new CollisionType(2, 2), RectangleShape::rectangleRectangleCollision);
 		_HashMap.put(new CollisionType(4, 5), this::planeLineCollision);
 		_HashMap.put(new CollisionType(5, 4), (a, b) -> planeLineCollision(b, a));
-		_HashMap.put(new CollisionType(5, 2), this::lineRectangleCollision);
-		_HashMap.put(new CollisionType(2, 5), (a, b) -> lineRectangleCollision(b, a));
 		_HashMap.put(new CollisionType(5, 1), this::lineCircleCollision);
 		_HashMap.put(new CollisionType(1, 5), (a, b) -> lineCircleCollision(b, a));
 		_HashMap.put(new CollisionType(5, 5), this::lineLineCollision);
-		_HashMap.put(new CollisionType(3, 1), this::triangleCircleCollision);
-		_HashMap.put(new CollisionType(3, 2), this::triangleRectangleCollision);
-		_HashMap.put(new CollisionType(3, 3), this::triangleTriangleCollision);
-		_HashMap.put(new CollisionType(3, 4), (a, b) -> planeTriangleCollision(b, a));
-		_HashMap.put(new CollisionType(3, 5), this::triangleLineCollision);
-		_HashMap.put(new CollisionType(1, 3), (a, b) -> triangleCircleCollision(b, a));
-		_HashMap.put(new CollisionType(2, 3), (a, b) -> triangleRectangleCollision(b, a));
-		_HashMap.put(new CollisionType(4, 3), this::planeTriangleCollision);
-		_HashMap.put(new CollisionType(5, 3), (a, b) -> triangleLineCollision(b, a));
+		_HashMap.put(new CollisionType(3, 1), this::convexHullCircleCollision);
+		_HashMap.put(new CollisionType(3, 3), this::convexHullConvexHullCollision);
+		_HashMap.put(new CollisionType(3, 4), (a, b) -> planeConvexHullCollision(b, a));
+		_HashMap.put(new CollisionType(3, 5), this::convexHullLineCollision);
+		_HashMap.put(new CollisionType(1, 3), (a, b) -> convexHullCircleCollision(b, a));
+		_HashMap.put(new CollisionType(4, 3), this::planeConvexHullCollision);
+		_HashMap.put(new CollisionType(5, 3), (a, b) -> convexHullLineCollision(b, a));
 		
 		
 	}
@@ -55,9 +51,28 @@ public class NarrowShapeCollisionDetection {
 		return _HashMap.get(new CollisionType(A, B)).generateContactPoints(A, B);
 	}
 	
-	private Collection<ContactPoint> triangleCircleCollision(RigidBody A, RigidBody B){
-		assert false;
-		return null;
+	private Collection<ContactPoint> convexHullCircleCollision(RigidBody A, RigidBody B){
+		ConvexHull hull = (ConvexHull) A;
+		CircleShape circle = (CircleShape) B;
+		ArrayList<ContactPoint> output = new ArrayList<ContactPoint>();
+		
+		ArrayList<MutableVec2> edges = hull.getEdges();
+		ArrayList<MutableVec2> vertices = hull.getVertices();
+		for(int i = 0; i < edges.size(); i++){
+			MutableVec2 normal = new MutableVec2(edges.get(i));
+			normal.normalize();
+			
+			double length;
+			if(normal.x() != 0){
+				length = edges.get(i).x() / normal.x();
+			}
+			else {
+				length = edges.get(i).y() / normal.y();
+			}
+			LineShape X = new LineShape(vertices.get(i), length , normal);
+			output.addAll(lineCircleCollision((RigidBody) X , (RigidBody) circle));
+		}
+		return output;
 	}
 	
 	private Collection<ContactPoint> triangleRectangleCollision(RigidBody A, RigidBody B){
@@ -65,17 +80,17 @@ public class NarrowShapeCollisionDetection {
 		return null;
 	}
 	
-	private Collection<ContactPoint> triangleTriangleCollision(RigidBody A, RigidBody B){
+	private Collection<ContactPoint> convexHullConvexHullCollision(RigidBody A, RigidBody B){
 		assert false;
 		return null;
 	}
 	
-	private Collection<ContactPoint> planeTriangleCollision(RigidBody A, RigidBody B){
+	private Collection<ContactPoint> planeConvexHullCollision(RigidBody A, RigidBody B){
 		assert false;
 		return null;
 	}
 	
-	private Collection<ContactPoint> triangleLineCollision(RigidBody A, RigidBody B){
+	private Collection<ContactPoint> convexHullLineCollision(RigidBody A, RigidBody B){
 		assert false;
 		return null;
 	}
